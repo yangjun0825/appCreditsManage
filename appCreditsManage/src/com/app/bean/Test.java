@@ -14,22 +14,22 @@ import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 public class Test {
     public static void main(String[] args) throws Exception {  
     	JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();  
-        org.apache.cxf.endpoint.Client client = dcf.createClient("http://192.168.1.248:8828/appCreditsManage/services/requestServerHandler?wsdl");  
-        //urlÎªµ÷ÓÃwebServiceµÄwsdlµØÖ·  
+        org.apache.cxf.endpoint.Client client = dcf.createClient("http://115.29.46.58:8080/appCreditsManage/services/requestServerHandler?wsdl");  
+        //urlÎªï¿½ï¿½ï¿½ï¿½webServiceï¿½ï¿½wsdlï¿½ï¿½Ö·  
         QName name=new QName("http://inter.app.com/","requestHandlerEnternce");  
-        //namespaceÊÇÃüÃû¿Õ¼ä£¬methodNameÊÇ·½·¨Ãû  
+        //namespaceï¿½ï¿½ï¿½ï¿½ï¿½ï¿½Õ¼ä£¬methodNameï¿½Ç·ï¿½ï¿½ï¿½ï¿½ï¿½  
         String xmlStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"  
                  + "     <facelook>"  
                  + "        <condition>"  
-                 + "            <name>¼Ò</name>"  
+                 + "            <name>ï¿½ï¿½</name>"  
                  + "            <description></description>"  
                  + "            <pageno></pageno>"  
                  + "            <pagesize></pagesize>"  
                  + "        </condition>"  
                  + "     </facelook>";  
-        //paramvalueÎª²ÎÊýÖµ  
+        //paramvalueÎªï¿½ï¿½ï¿½ï¿½Öµ  
         Object[] objects=client.invoke(name,xmlStr);   
-        //µ÷ÓÃweb Service//Êä³öµ÷ÓÃ½á¹û  
+        //ï¿½ï¿½ï¿½ï¿½web Service//ï¿½ï¿½ï¿½ï¿½ï¿½Ã½ï¿½ï¿½  
         System.out.println(objects[0].toString());  
     }  
 }
