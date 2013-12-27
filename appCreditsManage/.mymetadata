@@ -1,0 +1,13 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<project-module
+  type="WEB"
+  name="appCreditsManage"
+  id="myeclipse.1388123443276"
+  context-root="/appCreditsManage"
+  j2ee-spec="5.0"
+  archive="appCreditsManage.war">
+  <attributes>
+    <attribute name="webrootdir" value="WebRoot" />
+  </attributes>
+</project-module>
+
