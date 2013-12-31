@@ -9,7 +9,7 @@ import org.apache.commons.lang.StringUtils;
 /**
  * renderText()函数用于Ajax请求返回页面输出文本
  * 
- * @author pwp
+ * @author yangjun
  * 
  */
 public class SpringUtils {

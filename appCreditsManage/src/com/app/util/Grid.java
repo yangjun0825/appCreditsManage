@@ -8,7 +8,7 @@ import java.util.Map;
 /**
  * 前段页面grid内容
  * 
- * @author Administrator
+ * @author yangjun
  * 
  */
 public class Grid implements Serializable {

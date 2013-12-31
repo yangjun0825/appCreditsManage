@@ -5,7 +5,7 @@ import java.io.Serializable;
 /**
  * 分页容器
  * 
- * @author pwp
+ * @author yangjun
  * 
  */
 public class PageContainer implements Serializable {

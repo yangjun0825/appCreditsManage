@@ -7,7 +7,7 @@ import java.util.Map;
 /**
  * 页面参数容器
  * 
- * @author pwp
+ * @author yangjun
  * 
  */
 public class ConditionContainer implements Serializable {

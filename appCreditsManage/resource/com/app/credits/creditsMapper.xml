@@ -1,0 +1,47 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="credits">
+
+	<resultMap type="java.util.HashMap" id="countMap">
+		<result property="totalCount" column="totalCount" />
+	</resultMap>
+
+	<resultMap type="java.util.HashMap" id="creditsMap">
+		<result property="id" column="id" />
+		<result property="userid" column="userId" />
+		<result property="credit" column="password" />
+		<result property="credittype" column="creditType" />
+		<result property="channeltype" column="channelType" />
+		<result property="createtime" column="createTime" />
+	</resultMap>
+
+    <!--根据条件获取积分记录  -->
+	<select id="retrieveCreditsRecords" parameterType="map" resultMap="creditsMap">
+						select e.id           as id,
+		                       e.userid       as userId,
+		                       e.credit       as credit,
+		                       e.credittype   as creditType,
+		                       e.channeltype  as channelType,
+		                       e.createtime   as createTime
+		                  from creadit e
+		                 where e.credittype = #{creditType}
+		                   and e.userid = #{userId}
+	</select>
+	
+
+	<!-- 用户积分入库-->
+	<insert id="insertUserCredits" parameterType="com.app.user.bean.UserBean">
+		insert into credit(id, userid, credit, credittype, channeltype, createtime)
+		      values(#{id}, #{userId},  #{credit},  #{creditType}, #{channelType}, #{createTime}) 
+	</insert>
+	
+	<!-- 更新用户总积分 -->
+	<update id="updateUserTotalCredit" parameterType="com.app.credits.bean.CreditsBean">
+		update user c
+		   set c.totalcredit = 
+	</update>
+	
+	
+</mapper>

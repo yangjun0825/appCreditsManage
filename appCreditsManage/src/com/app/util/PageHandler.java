@@ -19,7 +19,7 @@ import org.apache.log4j.Logger;
 /**
  * 页面查询条件收集，dao返回结果集收集
  * 
- * @author pwp
+ * @author yangjun
  * 
  */
 @SuppressWarnings("all")
