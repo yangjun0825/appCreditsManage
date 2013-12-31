@@ -14,22 +14,18 @@ import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 public class Test {
     public static void main(String[] args) throws Exception {  
     	JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();  
-        org.apache.cxf.endpoint.Client client = dcf.createClient("http://115.29.46.58:8080/appCreditsManage/services/requestServerHandler?wsdl");  
-        //urlΪ����webService��wsdl��ַ  
+        org.apache.cxf.endpoint.Client client = dcf.createClient("http://192.168.1.248:8828/appCreditsManage/services/requestServerHandler?wsdl");  
         QName name=new QName("http://inter.app.com/","requestHandlerEnternce");  
-        //namespace������ռ䣬methodName�Ƿ�����  
-        String xmlStr = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"  
-                 + "     <facelook>"  
-                 + "        <condition>"  
-                 + "            <name>��</name>"  
-                 + "            <description></description>"  
-                 + "            <pageno></pageno>"  
-                 + "            <pagesize></pagesize>"  
-                 + "        </condition>"  
-                 + "     </facelook>";  
-        //paramvalueΪ����ֵ  
+        String xmlStr = "";  
+        xmlStr = "<tjtrequest>"
+       	 + "<bizcode>tjt001</bizcode>"
+    	 + "<transid>6F9619FF-8B86-D011-B42D-00C04FC964FF</transid>"
+    	 + "<timestamp>201207081223501234</timestamp>"
+    	 + "<imei>434343434334322</imei>"
+    	 + "<imsi>460030912121001</imsi>"
+    	 + "<svccont>PHByYT48aXRlbT48YWNjb3V0PmJpZTwvYWNjb3V0Pjxwd2Q+MTExMTExPC9wd2Q+PC9pdGVtPjwvcHJhPg==</svccont>"
+    	 + "</tjtrequest>";
         Object[] objects=client.invoke(name,xmlStr);   
-        //����web Service//�����ý��  
         System.out.println(objects[0].toString());  
     }  
 }

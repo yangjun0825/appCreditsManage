@@ -1,17 +1,10 @@
 package com.app.util;
 
-import java.io.ByteArrayOutputStream;
-import java.io.DataInputStream;
-import java.io.FileInputStream;
 import java.io.IOException;
-import java.io.InputStream;
-import java.text.ParseException;
+import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
-import java.util.Calendar;
 import java.util.Date;
 import java.util.List;
-import java.util.Properties;
-import java.util.Random;
 
 import org.dom4j.Document;
 import org.dom4j.DocumentException;
@@ -201,5 +194,23 @@ public class Util {
 		SimpleDateFormat sdf = new SimpleDateFormat(format);
 		String result = sdf.format(date);
 		return result;
+	}
+	
+	/**
+	 * 解密svccont节点
+	 * 
+	 * @param rootElment
+	 * @param xmlStr
+	 * @return
+	 * @throws UnsupportedEncodingException
+	 * @throws IOException
+	 */
+	public static String getDecodeStrForXml(Element rootElment, String xmlStr) throws UnsupportedEncodingException,
+			IOException {
+		String key = rootElment.elementText("svccont");
+		String decStr = new String(Base64.decode(key), "UTF-8");
+		xmlStr = xmlStr.replace(key, decStr);
+		System.out.println(xmlStr);
+		return xmlStr;
 	}
 }

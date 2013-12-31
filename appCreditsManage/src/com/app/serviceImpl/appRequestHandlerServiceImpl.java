@@ -48,45 +48,55 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 		
 		logger.debug("enter appRequestHandlerServiceImpl.requestHandlerEnternce(String xmlStr) " + "[xmlStr] = " + xmlStr);
 		
-		String rqXmlstr = xmlStr.replaceAll(" ", "+");
+		//String rqXmlstr = xmlStr.replaceAll(" ", "+");
+		String result = "";
 		try {
-			rqXmlstr = new String(Base64.decode(rqXmlstr), "UTF-8");
+			//rqXmlstr = new String(Base64.decode(rqXmlstr), "UTF-8");
 			
-			if(logger.isDebugEnabled()) {
-				logger.debug("[rqXmlstr] = " + rqXmlstr);
-			}
+//			if(logger.isDebugEnabled()) {
+//				logger.debug("[rqXmlstr] = " + rqXmlstr);
+//			}
 			
 			// 是否返回错误信息
 			boolean flag = false;
 			
-			String result = "";
-			
-			if(StringUtils.isNotBlank(rqXmlstr)) {
-				Document document = Util.stringToDocument(rqXmlstr);
+			if(StringUtils.isNotBlank(xmlStr)) {
+				Document document = Util.stringToDocument(xmlStr);
 				Element rootElment = document.getRootElement();
 				Util.parseHeaderXml(head, rootElment);
 				String bizCode = head.getBizcode();
 				
-				if (!flag || !"".endsWith(bizCode)) {
-					switch (InterfaceType.getInterfaceType(bizCode)) {
-						case tjt001:
-							result = userService.userRegister(rqXmlstr, head);
-							break;
-						case tjt002:
-							result = userService.userLogin(rqXmlstr, head);
-							break;
-						case tjt003:
-							result = creditsService.userCreditsSysn(rqXmlstr, head);
-							break;
-						case tjt004:
-							result = creditsService.userCreditsRecords(rqXmlstr, head);
-							break;
-						case tjt005:
-							result = userService.userFeedBack(rqXmlstr, head);
-							break;
-						default:
-							flag = true;
-							break;
+				if(StringUtils.isBlank(bizCode) || "null".equals(bizCode)) {
+					bizCode = "";
+				}
+				
+				String rqXmlstr = Util.getDecodeStrForXml(rootElment, xmlStr);
+				
+				if (!flag || StringUtils.isNotBlank(bizCode)) {
+					
+					try {
+						switch (InterfaceType.getInterfaceType(bizCode)) {
+							case tjt001:
+								result = userService.userRegister(rqXmlstr, head);
+								break;
+							case tjt002:
+								result = userService.userLogin(rqXmlstr, head);
+								break;
+							case tjt003:
+								result = creditsService.userCreditsSysn(rqXmlstr, head);
+								break;
+							case tjt004:
+								result = creditsService.userCreditsRecords(rqXmlstr, head);
+								break;
+							case tjt005:
+								result = userService.userFeedBack(rqXmlstr, head);
+								break;
+							default:
+								flag = true;
+								break;
+						}
+					} catch (Exception e){
+						flag = true;
 					}
 					
 				} else {
@@ -116,10 +126,8 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 			e.printStackTrace();
 		}// 
 		
-		
-		
 		logger.debug("exit appRequestHandlerServiceImpl.requestHandlerEnternce(String xmlStr)");
-		return "服务器成功接收";
+		return result;
 	}
 
 }
