@@ -28,14 +28,24 @@ public class Test {
 //    	 + "</tjtrequest>";
         
         //登录
+//        xmlStr = "<tjtrequest>"
+//          	 + "<bizcode>tjt002</bizcode>"
+//       	 + "<transid>6F9619FF-8B86-D011-B42D-00C04FC964FF</transid>"
+//       	 + "<timestamp>201207081223501234</timestamp>"
+//       	 + "<imei>434343434334322</imei>"
+//       	 + "<imsi>460030912121001</imsi>"
+//       	 + "<svccont>PHByYT48aXRlbT48YWNjb3V0PmJpZTwvYWNjb3V0Pjxwd2Q+MTExMTEyPC9wd2Q+PC9pdGVtPjwvcHJhPg==</svccont>"
+//       	 + "</tjtrequest>";
+//        
+        //积分同步
         xmlStr = "<tjtrequest>"
-          	 + "<bizcode>tjt002</bizcode>"
-       	 + "<transid>6F9619FF-8B86-D011-B42D-00C04FC964FF</transid>"
-       	 + "<timestamp>201207081223501234</timestamp>"
-       	 + "<imei>434343434334322</imei>"
-       	 + "<imsi>460030912121001</imsi>"
-       	 + "<svccont>PHByYT48aXRlbT48YWNjb3V0PmJpZTwvYWNjb3V0Pjxwd2Q+MTExMTEyPC9wd2Q+PC9pdGVtPjwvcHJhPg==</svccont>"
-       	 + "</tjtrequest>";
+         	 + "<bizcode>tjt003</bizcode>"
+      	 + "<transid>6F9619FF-8B86-D011-B42D-00C04FC964FF</transid>"
+      	 + "<timestamp>201207081223501234</timestamp>"
+      	 + "<imei>434343434334322</imei>"
+      	 + "<imsi>460030912121001</imsi>"
+      	 + "<svccont>PHByYT48aXRlbT48YWNjb3V0PmJpZTwvYWNjb3V0Pjx0eXBlPjE8L3R5cGU+PGNoYW5uZWx0eXBlPjE8L2NoYW5uZWx0eXBlPjxjcmVkaXQ+MTAwPC9jcmVkaXQ+PC9pdGVtPjwvcHJhPg==</svccont>"
+      	 + "</tjtrequest>";
         
         Object[] objects=client.invoke(name,xmlStr);   
         System.out.println("返回结果: " + objects[0].toString());  

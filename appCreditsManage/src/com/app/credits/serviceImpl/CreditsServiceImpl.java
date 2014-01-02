@@ -56,7 +56,7 @@ public class CreditsServiceImpl implements CreditsService {
 		String channelType = "";
 		
 		if(CollectionUtils.isNotEmpty(list)) {
-			account = list.get(0).elementTextTrim("account");
+			account = list.get(0).elementTextTrim("accout");
 			type = list.get(0).elementTextTrim("type");
 			credit = list.get(0).elementTextTrim("credit");
 			channelType = list.get(0).elementTextTrim("channelType");
@@ -68,7 +68,7 @@ public class CreditsServiceImpl implements CreditsService {
 		
 		if (StringUtils.isBlank(account) || StringUtils.isBlank(type)
 				|| StringUtils.isBlank(credit)) {
-			response = Util.getResponseForFalse(xmlStr, head, "100", "参数传递错误");
+			response = Util.getResponseForFalse(xmlStr, head, "101", "参数传递错误");
 			return response;
 		}
 		
@@ -94,6 +94,10 @@ public class CreditsServiceImpl implements CreditsService {
 		
 		//返回正确结果
 		response = Util.getResponseForTrue(head, "");
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[response] = " + response);
+		}
 		
 		logger.debug("exit CreditsServiceImpl.userCreditsSysn(String xmlStr, Head head) ");
 		return response;
