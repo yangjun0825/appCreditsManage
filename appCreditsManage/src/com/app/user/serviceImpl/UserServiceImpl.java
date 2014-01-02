@@ -6,13 +6,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.app.user.bean.UserBean;
 import com.app.user.bean.UserFeedBackBean;
@@ -65,6 +65,10 @@ public class UserServiceImpl implements UserService {
 			return response;
 		}
 		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[account] = " + account + " [password] = " + password);
+		}
+		
 		//查询该账号是否存在
 		String queryStr = "user.retrieveUserInfo";
 		
@@ -72,14 +76,20 @@ public class UserServiceImpl implements UserService {
 		params.put("account", account);
 		List<Map<String, Object>> userInfoList = userDao.getSearchList(queryStr, params);
 		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[userInfoList] = " + userInfoList);
+			if(userInfoList != null) {
+				logger.debug("[userInfoListSize] = " + userInfoList.size());
+			}
+		}
+		
 		//如果查询不到数据，说明该账号不存在，可以添加
-		if(!CollectionUtils.isEmpty(userInfoList)) {
-			return Util.getResponseForFalse(xmlStr, head, "101", "该账号已经存在");
+		if(CollectionUtils.isNotEmpty(userInfoList)) {
+			return Util.getResponseForFalse(xmlStr, head, "101", "该手机已经注册过，请直接登录");
 		}
 		
 		//用户信息入库
 		UserBean userBean = new UserBean();
-		userBean.setId(UUID.randomUUID().toString());
 		userBean.setAccount(account);
 		userBean.setPassword(password);
 		userBean.setCreateTime(new Date());
@@ -114,7 +124,7 @@ public class UserServiceImpl implements UserService {
 		String account = "";
 		String pwd = "";
 		
-		if(!CollectionUtils.isEmpty(list)) {
+		if(CollectionUtils.isNotEmpty(list)) {
 			account = list.get(0).elementTextTrim("accout");
 			pwd = list.get(0).elementTextTrim("pwd");
 		}
@@ -163,7 +173,7 @@ public class UserServiceImpl implements UserService {
 		String userId = "";
 		String content = "";
 		
-		if(!CollectionUtils.isEmpty(list)) {
+		if(CollectionUtils.isNotEmpty(list)) {
 			userId = list.get(0).elementTextTrim("userId");
 			content = list.get(0).elementTextTrim("msg");
 		}

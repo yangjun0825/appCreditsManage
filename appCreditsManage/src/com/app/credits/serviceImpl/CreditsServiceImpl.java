@@ -7,13 +7,13 @@ import java.util.List;
 import java.util.Map;
 import java.util.UUID;
 
+import org.apache.commons.collections.CollectionUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
-import org.springframework.util.CollectionUtils;
 
 import com.app.credits.bean.CreditsBean;
 import com.app.credits.service.CreditsService;
@@ -50,17 +50,24 @@ public class CreditsServiceImpl implements CreditsService {
 		
 		List<Element> list = Util.getRequestDataByXmlStr(xmlStr, "svccont/pra/item");
 		
-		String userId = "";
+		String account = "";
 		String type = "";
 		String credit = "";
+		String channelType = "";
 		
-		if(!CollectionUtils.isEmpty(list)) {
-			userId = list.get(0).elementTextTrim("userId");
+		if(CollectionUtils.isNotEmpty(list)) {
+			account = list.get(0).elementTextTrim("account");
 			type = list.get(0).elementTextTrim("type");
-			credit = list.get(0).elementTextTrim("score");
+			credit = list.get(0).elementTextTrim("credit");
+			channelType = list.get(0).elementTextTrim("channelType");
 		}
 		
-		if (StringUtils.isBlank(userId)) {
+		if(logger.isDebugEnabled()) {
+			logger.debug("[account] = " + account + " [type] = " + type + " [credit] = " + credit + " [channelType] = " + channelType);
+		}
+		
+		if (StringUtils.isBlank(account) || StringUtils.isBlank(type)
+				|| StringUtils.isBlank(credit)) {
 			response = Util.getResponseForFalse(xmlStr, head, "100", "参数传递错误");
 			return response;
 		}
@@ -70,6 +77,7 @@ public class CreditsServiceImpl implements CreditsService {
 		
 		CreditsBean creditsBean = new CreditsBean();
 		creditsBean.setId(UUID.randomUUID().toString());
+		creditsBean.setAccount(account);
 		creditsBean.setCredit(credit);
 		creditsBean.setCreditType(type);
 		creditsBean.setChannelType("");
@@ -81,12 +89,11 @@ public class CreditsServiceImpl implements CreditsService {
 		}
 		
 		//对用户总积分处理
-		String updateStr = "credits.updateUserTotalCredit";
-		int j = creditsDao.update(updateStr, creditsBean);
+		//String updateStr = "credits.updateUserTotalCredit";
+		//int j = creditsDao.update(updateStr, creditsBean);
 		
 		//返回正确结果
 		response = Util.getResponseForTrue(head, "");
-		
 		
 		logger.debug("exit CreditsServiceImpl.userCreditsSysn(String xmlStr, Head head) ");
 		return response;

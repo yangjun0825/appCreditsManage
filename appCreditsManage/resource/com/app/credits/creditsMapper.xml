@@ -20,21 +20,21 @@
     <!--根据条件获取积分记录  -->
 	<select id="retrieveCreditsRecords" parameterType="map" resultMap="creditsMap">
 						select e.id           as id,
-		                       e.userid       as userId,
+		                       e.account      as account,
 		                       e.credit       as credit,
 		                       e.credittype   as creditType,
 		                       e.channeltype  as channelType,
 		                       e.createtime   as createTime
-		                  from creadit e
+		                  from credit e
 		                 where e.credittype = #{creditType}
-		                   and e.userid = #{userId}
+		                   and e.account = #{account}
 	</select>
 	
 
 	<!-- 用户积分入库-->
 	<insert id="insertUserCredits" parameterType="com.app.user.bean.UserBean">
-		insert into credit(id, userid, credit, credittype, channeltype, createtime)
-		      values(#{id}, #{userId},  #{credit},  #{creditType}, #{channelType}, #{createTime}) 
+		insert into credit(id, account, credit, credittype, channeltype, createtime)
+		      values(#{id}, #{account},  #{credit},  #{creditType}, #{channelType}, #{createTime}) 
 	</insert>
 	
 	<!-- 更新用户总积分 -->

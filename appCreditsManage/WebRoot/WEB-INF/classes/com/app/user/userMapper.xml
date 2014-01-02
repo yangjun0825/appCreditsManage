@@ -9,8 +9,7 @@
 	</resultMap>
 
 	<resultMap type="java.util.HashMap" id="userMap">
-		<result property="id" column="id" />
-		<result property="accout" column="accout" />
+		<result property="account" column="account" />
 		<result property="password" column="password" />
 		<result property="totalcredit" column="totalCredit" />
 		<result property="createtime" column="createTime" />
@@ -18,14 +17,13 @@
 
     <!--根据条件账号信息  -->
 	<select id="retrieveUserInfo" parameterType="map" resultMap="userMap">
-						select e.id            as id,
-		                       e.accout        as accout,
+						select e.account       as account,
 		                       e.password      as password,
-		                       e.totalcredit   as totalcredit,
-		                       e.createtime    as createtime
+		                       e.totalcredit   as totalCredit,
+		                       e.createtime    as createTime
 		                  from user e
 		                 where 1=1
-		                   and e.accout = #{accout}
+		                   and e.account = #{account}
 		                 <if test="password != null">
 						   and e.password = #{password}
 						 </if>
@@ -34,8 +32,8 @@
 
 	<!-- 插入一个新用户 -->
 	<insert id="insertUser" parameterType="com.app.user.bean.UserBean">
-		insert into user(id, accout, password, totalcredit, createtime)
-		      values(#{id}, #{accout},  #{password},  #{totalcredit},  #{createtime}) 
+		insert into user(account, password, totalcredit, createtime)
+		      values(#{account},  #{password},  #{totalCredit},  #{createTime}) 
 	</insert>
 	
 </mapper>

@@ -126,6 +126,10 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 			e.printStackTrace();
 		}// 
 		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[result] = " + result);
+		}
+		
 		logger.debug("exit appRequestHandlerServiceImpl.requestHandlerEnternce(String xmlStr)");
 		return result;
 	}

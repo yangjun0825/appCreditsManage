@@ -12,8 +12,8 @@
 		<!-- 
 		<mapper resource="com/yiyacare/resources/user/UserMapper.xml"/>
 		 -->
-		 <!--  <mapper resource="com/app/user/creditsMapper.xml"/>
+		 <mapper resource="com/app/credits/creditsMapper.xml"/>
 		 <mapper resource="com/app/user/userFeedBackMapper.xml"/>
-		 <mapper resource="com/app/user/userMapper.xml"/>-->
+		 <mapper resource="com/app/user/userMapper.xml"/>
 	</mappers>
 </configuration>  

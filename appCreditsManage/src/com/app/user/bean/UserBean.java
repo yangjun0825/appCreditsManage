@@ -11,12 +11,7 @@ import java.util.Date;
 public class UserBean {
 	
 	/** 
-	* @Fields id : 主键ID 
-	*/ 
-	private String id;
-	
-	/** 
-	* @Fields account : 用户账号
+	* @Fields account : 用户账号，主键
 	*/ 
 	private String account;
 	
@@ -34,14 +29,6 @@ public class UserBean {
 	* @Fields createTime : 创建时间
 	*/ 
 	private Date createTime;
-
-	public String getId() {
-		return id;
-	}
-
-	public void setId(String id) {
-		this.id = id;
-	}
 
 	public String getAccount() {
 		return account;
