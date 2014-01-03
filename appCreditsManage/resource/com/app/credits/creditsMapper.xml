@@ -38,9 +38,9 @@
 	</insert>
 	
 	<!-- 更新用户总积分 -->
-	<update id="updateUserTotalCredit" parameterType="com.app.credits.bean.CreditsBean">
+	<update id="updateUserTotalCredit" parameterType="map">
 		update user c
-		   set c.totalcredit = 
+   		   set c.totalcredit = CAST(c.totalcredit AS SIGNED) - CAST(#{credit} AS SIGNED)
 	</update>
 	
 	

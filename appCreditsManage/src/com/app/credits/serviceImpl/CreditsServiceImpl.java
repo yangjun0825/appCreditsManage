@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.app.credits.bean.CreditsBean;
 import com.app.credits.service.CreditsService;
 import com.app.util.Base64;
+import com.app.util.Constant;
 import com.app.util.MyBatisDao;
 import com.app.util.Util;
 import com.app.vo.Head;
@@ -84,13 +85,24 @@ public class CreditsServiceImpl implements CreditsService {
 		creditsBean.setCreateTime(new Date());
 		
 		int i = creditsDao.insert(insertStr, creditsBean);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[creditDbInsertResult] = " + i);
+		}
+		
 		if(i > 0) {
 			Util.getResponseForTrue(head, "");
 		}
 		
 		//对用户总积分处理
-		//String updateStr = "credits.updateUserTotalCredit";
-		//int j = creditsDao.update(updateStr, creditsBean);
+		String updateStr = "credits.updateUserTotalCredit";
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("credit", credit);
+		int j = creditsDao.update(updateStr, params);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[creditDbUpdateResult] = " + j);
+		}
 		
 		//返回正确结果
 		response = Util.getResponseForTrue(head, "");
@@ -119,21 +131,25 @@ public class CreditsServiceImpl implements CreditsService {
 		
 		List<Element> list = Util.getRequestDataByXmlStr(xmlStr, "svccont/pra/item");
 		
-		String userId = "";
+		String account = "";
 		
 		if(!CollectionUtils.isEmpty(list)) {
-			userId = list.get(0).elementTextTrim("userId");
+			account = list.get(0).elementTextTrim("accout");
 		}
 		
-		if (StringUtils.isBlank(userId)) {
+		if(logger.isDebugEnabled()) {
+			logger.debug("[account] = " + account);
+		}
+		
+		if (StringUtils.isBlank(account)) {
 			response = Util.getResponseForFalse(xmlStr, head, "100", "参数传递错误");
 			return response;
 		}
 		
 		//获取用户积分记录
 		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("userId", userId);
-		params.put("creditType", "2");
+		params.put("account", account);
+		params.put("creditType", Constant.min_credit);
 		
 		String queryStr = "credits.retrieveCreditsRecords";
 		List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryStr, params);
@@ -142,17 +158,20 @@ public class CreditsServiceImpl implements CreditsService {
 		
 		//返回正确结果
 		if(CollectionUtils.isEmpty(creditsRecordsList)) {
-			response = Util.getResponseForFalse(xmlStr, head, "100", "没有对应提现记录");
+			response = Util.getResponseForFalse(xmlStr, head, "101", "没有对应提现记录");
 			return response;
 		} else {
 			for(Map<String, Object> map : creditsRecordsList) {
 				creditSb.append("<item>");
-				creditSb.append("<createtime>" + map.get("createtime") + "</createtime>");
+				creditSb.append("<time>" + map.get("createtime") + "</time>");
 				creditSb.append("<credit>" + map.get("credit") + "</credit>");
 				creditSb.append("</item>");
 			}
 			
 			String encodeStr = creditSb.toString();
+			if(logger.isDebugEnabled()) {
+				logger.debug("[encodeStr] = " + encodeStr);
+			}
 			try {
 				encodeStr = Base64.encodeBytes(encodeStr.getBytes("UTF-8"));
 			} catch (UnsupportedEncodingException e) {
@@ -161,6 +180,10 @@ public class CreditsServiceImpl implements CreditsService {
 			}
 			response = Util.getResponseForTrue(head, encodeStr);
 			
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[response] = " + response);
 		}
 		
 		logger.debug("exit CreditsServiceImpl.userCreditsSysn(String xmlStr, Head head) ");

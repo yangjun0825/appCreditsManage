@@ -1,5 +1,6 @@
 package com.app.user.serviceImpl;
 
+import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.app.user.bean.UserBean;
 import com.app.user.bean.UserFeedBackBean;
 import com.app.user.service.UserService;
+import com.app.util.Base64;
 import com.app.util.MyBatisDao;
 import com.app.util.Util;
 import com.app.vo.Head;
@@ -92,9 +94,14 @@ public class UserServiceImpl implements UserService {
 		UserBean userBean = new UserBean();
 		userBean.setAccount(account);
 		userBean.setPassword(password);
+		userBean.setTotalCredit("0");
 		userBean.setCreateTime(new Date());
 		String insertStr = "user.insertUser";
 		int i = userDao.insert(insertStr, userBean);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[registerDbInsertResult] = " + i);
+		}
 		
 		if(i > 0) {
 			//返回正确结果
@@ -143,12 +150,34 @@ public class UserServiceImpl implements UserService {
 		List<Map<String, Object>> userInfoList = userDao.getSearchList(queryStr, params);
 		
 		if(CollectionUtils.isEmpty(userInfoList)) {
-			response = Util.getResponseForFalse(xmlStr, head, "101", "用户密码或者密码错误");
+			response = Util.getResponseForFalse(xmlStr, head, "101", "用户名或者密码错误");
 			return response;
 		}
 		
-		//返回正确结果
-		response = Util.getResponseForTrue(head, "");
+		StringBuffer userSb = new StringBuffer();
+		
+		for(Map<String, Object> map : userInfoList) {
+			userSb.append("<item>");
+			userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
+			userSb.append("</item>");
+		}
+		
+		String encodeStr = userSb.toString();
+		if(logger.isDebugEnabled()) {
+			logger.debug("[encodeStr] = " + encodeStr);
+		}
+		
+		try {
+			encodeStr = Base64.encodeBytes(encodeStr.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}
+		response = Util.getResponseForTrue(head, encodeStr);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[response] = " + response);
+		}
 		
 		logger.debug("exit UserServiceImpl.userLogin(String xmlStr, Head head)");
 		return response;
@@ -170,28 +199,36 @@ public class UserServiceImpl implements UserService {
 		
 		List<Element> list = Util.getRequestDataByXmlStr(xmlStr, "svccont/pra/item");
 		
-		String userId = "";
+		String account = "";
 		String content = "";
 		
 		if(CollectionUtils.isNotEmpty(list)) {
-			userId = list.get(0).elementTextTrim("userId");
+			account = list.get(0).elementTextTrim("accout");
 			content = list.get(0).elementTextTrim("msg");
 		}
 		
 		//保存用户反馈信息
 		UserFeedBackBean feedBackBean = new UserFeedBackBean();
 		feedBackBean.setId(UUID.randomUUID().toString());
-		feedBackBean.setId(userId);
+		feedBackBean.setAccount(account);
 		feedBackBean.setContent(content);
 		feedBackBean.setCreateTime(new Date());
 		
 		String insertStr = "userFeedBack.insertUserFeedBack";
 		int i = userDao.insert(insertStr, feedBackBean);
 		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[feedBackDbInsertResult] = " + i);
+		}
+		
 		if(i > 0) {
 			response = Util.getResponseForTrue(head, "");
 		} else {
 			response = Util.getResponseForFalse(xmlStr, head, "100", "反馈信息保存失败");
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[response] = " + response);
 		}
 		
 		logger.debug("exit UserServiceImpl.userFeedBack(String xmlStr, Head head)");

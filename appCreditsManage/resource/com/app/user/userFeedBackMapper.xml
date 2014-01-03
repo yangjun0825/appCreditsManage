@@ -10,15 +10,15 @@
 
 	<resultMap type="java.util.HashMap" id="userFeedBackMap">
 		<result property="id" column="id" />
-		<result property="userid" column="userId" />
+		<result property="account" column="account" />
 		<result property="content" column="content" />
 		<result property="createtime" column="createTime" />
 	</resultMap>
 
 	<!-- 插入反馈意见 -->
 	<insert id="insertUserFeedBack" parameterType="com.app.user.bean.UserFeedBackBean">
-		insert into user(id, userid, content, createtime)
-		      values(#{id}, #{userId},  #{content}, #{createtime}) 
+		insert into feedback(id, account, content, createtime)
+		      values(#{id}, #{account},  #{content}, #{createTime}) 
 	</insert>
 	
 </mapper>

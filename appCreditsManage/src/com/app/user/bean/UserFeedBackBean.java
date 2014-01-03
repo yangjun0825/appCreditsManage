@@ -18,7 +18,7 @@ public class UserFeedBackBean {
 	/** 
 	* @Fields userId : 用户ID
 	*/ 
-	private String userId;
+	private String account;
 	
 	/** 
 	* @Fields content : 反馈内容 
@@ -38,12 +38,12 @@ public class UserFeedBackBean {
 		this.id = id;
 	}
 
-	public String getUserId() {
-		return userId;
+	public String getAccount() {
+		return account;
 	}
 
-	public void setUserId(String userId) {
-		this.userId = userId;
+	public void setAccount(String account) {
+		this.account = account;
 	}
 
 	public String getContent() {
