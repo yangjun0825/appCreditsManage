@@ -61,7 +61,15 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 			boolean flag = false;
 			
 			if(StringUtils.isNotBlank(xmlStr)) {
-				Document document = Util.stringToDocument(xmlStr);
+				
+				xmlStr = xmlStr.replaceAll(" ", "+");
+				String rqXmlstr = new String(Base64.decode(xmlStr), "UTF-8");
+				
+				if(logger.isDebugEnabled()) {
+					logger.debug("[rqXmlstr] = " + rqXmlstr);
+				}
+				
+				Document document = Util.stringToDocument(rqXmlstr);
 				Element rootElment = document.getRootElement();
 				Util.parseHeaderXml(head, rootElment);
 				String bizCode = head.getBizcode();
@@ -70,7 +78,7 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 					bizCode = "";
 				}
 				
-				String rqXmlstr = Util.getDecodeStrForXml(rootElment, xmlStr);
+				//String rqXmlstr = Util.getDecodeStrForXml(rootElment, xmlStr);
 				
 				if (!flag || StringUtils.isNotBlank(bizCode)) {
 					
@@ -96,6 +104,7 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 								break;
 						}
 					} catch (Exception e){
+						logger.debug("[SystemError] = " + e.getMessage());
 						flag = true;
 					}
 					
@@ -120,14 +129,25 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 			
 		} catch (UnsupportedEncodingException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("[SystemError] = " + e.getMessage());
 		} catch (IOException e) {
 			// TODO Auto-generated catch block
-			e.printStackTrace();
+			logger.debug("[SystemError] = " + e.getMessage());
 		}// 
 		
 		if(logger.isDebugEnabled()) {
-			logger.debug("[result] = " + result);
+			logger.debug("[resultBe] = " + result);
+		}
+		
+		try {
+			result = Base64.encodeBytes(result.getBytes("UTF-8"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			logger.debug("[SystemError] = " + e.getMessage());
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[resultAe] = " + result);
 		}
 		
 		logger.debug("exit appRequestHandlerServiceImpl.requestHandlerEnternce(String xmlStr)");

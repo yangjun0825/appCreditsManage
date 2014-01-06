@@ -1,6 +1,5 @@
 package com.app.credits.serviceImpl;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -17,7 +16,6 @@ import org.springframework.stereotype.Service;
 
 import com.app.credits.bean.CreditsBean;
 import com.app.credits.service.CreditsService;
-import com.app.util.Base64;
 import com.app.util.Constant;
 import com.app.util.MyBatisDao;
 import com.app.util.Util;
@@ -44,7 +42,7 @@ public class CreditsServiceImpl implements CreditsService {
 	* @see com.app.credits.service.CreditsService#userCreditsSysn() 
 	*/
 	@Override
-	public String userCreditsSysn(String xmlStr, Head head) {
+	public String userCreditsSysn(String xmlStr, Head head) throws Exception {
 		logger.debug("enter CreditsServiceImpl.userCreditsSysn(String xmlStr, Head head) " + "[xmlStr] = " + xmlStr);
 		
 		String response = "";
@@ -124,7 +122,7 @@ public class CreditsServiceImpl implements CreditsService {
 	* @see com.app.credits.service.CreditsService#userCreditsRecords(java.lang.String, com.app.vo.Head) 
 	*/
 	@Override
-	public String userCreditsRecords(String xmlStr, Head head) {
+	public String userCreditsRecords(String xmlStr, Head head) throws Exception {
 		logger.debug("enter CreditsServiceImpl.userCreditsSysn(String xmlStr, Head head) " + "[xmlStr] = " + xmlStr);
 		
 		String response = "";
@@ -172,14 +170,7 @@ public class CreditsServiceImpl implements CreditsService {
 			if(logger.isDebugEnabled()) {
 				logger.debug("[encodeStr] = " + encodeStr);
 			}
-			try {
-				encodeStr = Base64.encodeBytes(encodeStr.getBytes("UTF-8"));
-			} catch (UnsupportedEncodingException e) {
-				// TODO Auto-generated catch block
-				e.printStackTrace();
-			}
 			response = Util.getResponseForTrue(head, encodeStr);
-			
 		}
 		
 		if(logger.isDebugEnabled()) {

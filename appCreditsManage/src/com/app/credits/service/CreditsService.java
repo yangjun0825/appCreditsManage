@@ -16,7 +16,7 @@ public interface CreditsService {
 	* @return String    返回类型 
 	* @throws 
 	*/
-	public String userCreditsSysn(String xmlStr, Head head);
+	public String userCreditsSysn(String xmlStr, Head head) throws Exception;
 	
 	/** 
 	* @Title: userCreditsRecords 
@@ -26,6 +26,6 @@ public interface CreditsService {
 	* @return String    返回类型 
 	* @throws 
 	*/
-	public String userCreditsRecords(String xmlStr, Head head);
+	public String userCreditsRecords(String xmlStr, Head head) throws Exception;
 	
 }

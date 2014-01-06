@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 	* @see com.app.user.service.UserRegisterService#userRegister(java.lang.String) 
 	*/
 	@Override
-	public String userRegister(String xmlStr, Head head) {
+	public String userRegister(String xmlStr, Head head) throws Exception {
 		logger.debug("enter UserServiceImpl.userRegister(String xmlStr, Head head)");
 		
 		String response = "";
@@ -121,7 +121,7 @@ public class UserServiceImpl implements UserService {
 	* @see com.app.user.service.UserService#userLogin(java.lang.String, com.app.vo.Head) 
 	*/
 	@Override
-	public String userLogin(String xmlStr, Head head) {
+	public String userLogin(String xmlStr, Head head) throws Exception {
 		logger.debug("enter UserServiceImpl.userLogin(String xmlStr, Head head)");
 		
 		String response = "";
@@ -167,12 +167,6 @@ public class UserServiceImpl implements UserService {
 			logger.debug("[encodeStr] = " + encodeStr);
 		}
 		
-		try {
-			encodeStr = Base64.encodeBytes(encodeStr.getBytes("UTF-8"));
-		} catch (UnsupportedEncodingException e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 		response = Util.getResponseForTrue(head, encodeStr);
 		
 		if(logger.isDebugEnabled()) {
@@ -192,7 +186,7 @@ public class UserServiceImpl implements UserService {
 	* @see com.app.user.service.UserService#userFeedBack(java.lang.String, com.app.vo.Head) 
 	*/
 	@Override
-	public String userFeedBack(String xmlStr, Head head) {
+	public String userFeedBack(String xmlStr, Head head) throws Exception {
 		logger.debug("enter UserServiceImpl.userFeedBack(String xmlStr, Head head) " + "[xmlStr] = " + xmlStr);
 		
 		String response = "";

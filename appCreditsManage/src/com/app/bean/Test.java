@@ -24,18 +24,22 @@ public class Test {
 //    	 + "<timestamp>201207081223501234</timestamp>"
 //    	 + "<imei>434343434334322</imei>"
 //    	 + "<imsi>460030912121001</imsi>"
-//    	 + "<svccont>PHByYT48aXRlbT48YWNjb3V0PmJpZTwvYWNjb3V0Pjxwd2Q+MTExMTExPC9wd2Q+PC9pdGVtPjwvcHJhPg==</svccont>"
+//    	 + "<version>1.0</version>"
+//    	 + "<svccont>"
+//    	 + "<pra><item><accout>123456789</accout><pwd>111111</pwd></item></pra>" 
+//    	 + "</svccont>"
 //    	 + "</tjtrequest>";
+        xmlStr = "PHRqdHJlcXVlc3Q+PGJpemNvZGU+dGp0MDAxPC9iaXpjb2RlPjx0cmFuc2lkPjZGOTYxOUZGLThCODYtRDAxMS1CNDJELTAwQzA0RkM5NjRGRjwvdHJhbnNpZD48dGltZXN0YW1wPjIwMTIwNzA4MTIyMzUwMTIzNDwvdGltZXN0YW1wPjxpbWVpPjQzNDM0MzQzNDMzNDMyMjwvaW1laT48aW1zaT40NjAwMzA5MTIxMjEwMDE8L2ltc2k+PHZlcnNpb24+MS4wPC92ZXJzaW9uPjxzdmNjb250PjxwcmE+PGl0ZW0+PGFjY291dD4xMjM0NTY3ODk8L2FjY291dD48cHdkPjExMTExMTwvcHdkPjwvaXRlbT48L3ByYT48L3N2Y2NvbnQ+PC90anRyZXF1ZXN0Pg==";
         
         //登录
-        xmlStr = "<tjtrequest>"
-          	 + "<bizcode>tjt002</bizcode>"
-       	 + "<transid>6F9619FF-8B86-D011-B42D-00C04FC964FF</transid>"
-       	 + "<timestamp>201207081223501234</timestamp>"
-       	 + "<imei>434343434334322</imei>"
-       	 + "<imsi>460030912121001</imsi>"
-       	 + "<svccont>PHByYT48aXRlbT48YWNjb3V0PmJpZTwvYWNjb3V0Pjxwd2Q+MTExMTExPC9wd2Q+PC9pdGVtPjwvcHJhPg==</svccont>"
-       	 + "</tjtrequest>";
+//        xmlStr = "<tjtrequest>"
+//          	 + "<bizcode>tjt002</bizcode>"
+//       	 + "<transid>6F9619FF-8B86-D011-B42D-00C04FC964FF</transid>"
+//       	 + "<timestamp>201207081223501234</timestamp>"
+//       	 + "<imei>434343434334322</imei>"
+//       	 + "<imsi>460030912121001</imsi>"
+//       	 + "<svccont>PHByYT48aXRlbT48YWNjb3V0PmJpZTwvYWNjb3V0Pjxwd2Q+MTExMTExPC9wd2Q+PC9pdGVtPjwvcHJhPg==</svccont>"
+//       	 + "</tjtrequest>";
 //        
         //积分同步
 //        xmlStr = "<tjtrequest>"

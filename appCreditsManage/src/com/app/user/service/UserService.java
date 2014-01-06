@@ -19,7 +19,7 @@ public interface UserService {
 	* @return String    返回类型 
 	* @throws 
 	*/
-	public String userRegister(String xmlStr, Head head);
+	public String userRegister(String xmlStr, Head head) throws Exception ;
 	
 	/** 
 	* @Title: userLogin 
@@ -29,7 +29,7 @@ public interface UserService {
 	* @return String    返回类型 
 	* @throws 
 	*/
-	public String userLogin(String xmlStr, Head head);
+	public String userLogin(String xmlStr, Head head) throws Exception;
 	
 	/** 
 	* @Title: userFeedBack 
@@ -39,6 +39,6 @@ public interface UserService {
 	* @return String    返回类型 
 	* @throws 
 	*/
-	public String userFeedBack(String xmlStr, Head head);
+	public String userFeedBack(String xmlStr, Head head) throws Exception;
 	
 }
