@@ -67,7 +67,7 @@ public class CreditsServiceImpl implements CreditsService {
 		
 		if (StringUtils.isBlank(account) || StringUtils.isBlank(type)
 				|| StringUtils.isBlank(credit)) {
-			response = Util.getResponseForFalse(xmlStr, head, "101", "参数传递错误");
+			response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
 			return response;
 		}
 		
@@ -92,21 +92,88 @@ public class CreditsServiceImpl implements CreditsService {
 			Util.getResponseForTrue(head, "");
 		}
 		
-		//对用户总积分处理
-		String updateStr = "credits.updateUserTotalCredit";
-		Map<String, Object> params = new HashMap<String, Object>();
-		params.put("credit", credit);
-		int j = creditsDao.update(updateStr, params);
+		//查询用户总积分
+		String queryStr = "user.retrieveUserInfo";
+		
+		Map<String, Object> userParams = new HashMap<String, Object>();
+		userParams.put("account", account);
+		List<Map<String, Object>> userInfoList = creditsDao.getSearchList(queryStr, userParams);
 		
 		if(logger.isDebugEnabled()) {
-			logger.debug("[creditDbUpdateResult] = " + j);
+			logger.debug("[userInfoList] = " + userInfoList);
+			if(userInfoList != null) {
+				logger.debug("[userInfoListSize] = " + userInfoList.size());
+			}
 		}
 		
-		//返回正确结果
-		response = Util.getResponseForTrue(head, "");
+		//如果查询到的用户总积分比用户同步的积分大，才允许提取积分
+		if(CollectionUtils.isNotEmpty(userInfoList)) {
+			String totalCredit = (String)userInfoList.get(0).get("totalcredit");
+			
+			int totalCredit_i = Integer.parseInt(totalCredit);
+			
+			int credit_i = Integer.parseInt(credit);
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("[totalCredit] = " + totalCredit + " [totalCredit_i] = " + totalCredit_i + " [credit_i] = " + credit_i);
+			}
+			
+			if(totalCredit_i - credit_i >= 0) {
+				//对用户总积分处理
+				String updateStr = "credits.updateUserTotalCredit";
+				Map<String, Object> params = new HashMap<String, Object>();
+				params.put("credit", credit);
+				int j = creditsDao.update(updateStr, params);
+				
+				if(logger.isDebugEnabled()) {
+					logger.debug("[creditDbUpdateResult] = " + j);
+				}
+				
+				if(j > 0) {
+					//返回正确结果
+					response = Util.getResponseForTrue(head, "");
+					
+					if(logger.isDebugEnabled()) {
+						logger.debug("[response] = " + response);
+					}
+				}
+			} else {
+				return Util.getResponseForFalse(xmlStr, head, "105", "余额不足，无法提现");
+			}
+		} else {
+			return Util.getResponseForFalse(xmlStr, head, "101", "不存在的账号");
+		}
+		
+		//同步之后再次查询用户总积分
+		String queryStrAfSysn = "user.retrieveUserInfo";
+		
+		Map<String, Object> userParamsAfSysn = new HashMap<String, Object>();
+		userParamsAfSysn.put("account", account);
+		List<Map<String, Object>> userInfoAfSysnList = creditsDao.getSearchList(queryStrAfSysn, userParamsAfSysn);
 		
 		if(logger.isDebugEnabled()) {
-			logger.debug("[response] = " + response);
+			logger.debug("[userInfoAfSysnList] = " + userInfoAfSysnList);
+			if(userInfoList != null) {
+				logger.debug("[userInfoAfSysnListSize] = " + userInfoAfSysnList.size());
+			}
+		}
+		
+		if(CollectionUtils.isNotEmpty(userInfoAfSysnList)) {
+			StringBuffer userSb = new StringBuffer();
+			
+			for(Map<String, Object> map : userInfoAfSysnList) {
+				userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
+			}
+			
+			String encodeStr = userSb.toString();
+			if(logger.isDebugEnabled()) {
+				logger.debug("[encodeStr] = " + encodeStr);
+			}
+			
+			response = Util.getResponseForTrue(head, encodeStr);
+		} else {
+			String encodeStr = "<credits></credits>";
+			response = Util.getResponseForTrue(head, encodeStr);
 		}
 		
 		logger.debug("exit CreditsServiceImpl.userCreditsSysn(String xmlStr, Head head) ");
@@ -140,7 +207,7 @@ public class CreditsServiceImpl implements CreditsService {
 		}
 		
 		if (StringUtils.isBlank(account)) {
-			response = Util.getResponseForFalse(xmlStr, head, "100", "参数传递错误");
+			response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
 			return response;
 		}
 		
@@ -153,25 +220,24 @@ public class CreditsServiceImpl implements CreditsService {
 		List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryStr, params);
 		
 		StringBuffer creditSb = new StringBuffer();
+		creditSb.append("<contentitem>");
 		
 		//返回正确结果
-		if(CollectionUtils.isEmpty(creditsRecordsList)) {
-			response = Util.getResponseForFalse(xmlStr, head, "101", "没有对应提现记录");
-			return response;
-		} else {
+		if(CollectionUtils.isNotEmpty(creditsRecordsList)) {
 			for(Map<String, Object> map : creditsRecordsList) {
 				creditSb.append("<item>");
 				creditSb.append("<time>" + map.get("createtime") + "</time>");
 				creditSb.append("<credit>" + map.get("credit") + "</credit>");
 				creditSb.append("</item>");
 			}
-			
-			String encodeStr = creditSb.toString();
-			if(logger.isDebugEnabled()) {
-				logger.debug("[encodeStr] = " + encodeStr);
-			}
-			response = Util.getResponseForTrue(head, encodeStr);
 		}
+		creditSb.append("<contentitem>");
+		
+		String encodeStr = creditSb.toString();
+		if(logger.isDebugEnabled()) {
+			logger.debug("[encodeStr] = " + encodeStr);
+		}
+		response = Util.getResponseForTrue(head, encodeStr);
 		
 		if(logger.isDebugEnabled()) {
 			logger.debug("[response] = " + response);

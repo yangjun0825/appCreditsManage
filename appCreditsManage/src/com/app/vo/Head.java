@@ -26,7 +26,17 @@ public class Head {
 	
 	private int btypeid;
 	
-	private String version;//�汾��
+	private String version;
+	
+	private String code;
+
+	public String getCode() {
+		return code;
+	}
+
+	public void setCode(String code) {
+		this.code = code;
+	}
 
 	public int getBtypeid() {
 		return btypeid;

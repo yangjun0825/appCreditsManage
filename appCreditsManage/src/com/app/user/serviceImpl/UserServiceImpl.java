@@ -1,6 +1,5 @@
 package com.app.user.serviceImpl;
 
-import java.io.UnsupportedEncodingException;
 import java.util.Date;
 import java.util.HashMap;
 import java.util.List;
@@ -18,7 +17,6 @@ import org.springframework.stereotype.Service;
 import com.app.user.bean.UserBean;
 import com.app.user.bean.UserFeedBackBean;
 import com.app.user.service.UserService;
-import com.app.util.Base64;
 import com.app.util.MyBatisDao;
 import com.app.util.Util;
 import com.app.vo.Head;
@@ -63,7 +61,7 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		if (StringUtils.isBlank(account) || StringUtils.isBlank(password)) {
-			response = Util.getResponseForFalse(xmlStr, head, "100", "注册失败，用户名或者密码不能为空");
+			response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
 			return response;
 		}
 		
@@ -137,7 +135,7 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		if (StringUtils.isBlank(account) || StringUtils.isBlank(pwd)) {
-			response = Util.getResponseForFalse(xmlStr, head, "100", "登录失败，用户名、密码不能为空");
+			response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
 			return response;
 		}
 		
@@ -150,16 +148,14 @@ public class UserServiceImpl implements UserService {
 		List<Map<String, Object>> userInfoList = userDao.getSearchList(queryStr, params);
 		
 		if(CollectionUtils.isEmpty(userInfoList)) {
-			response = Util.getResponseForFalse(xmlStr, head, "101", "用户名或者密码错误");
+			response = Util.getResponseForFalse(xmlStr, head, "103", "密码不匹配");
 			return response;
 		}
 		
 		StringBuffer userSb = new StringBuffer();
 		
 		for(Map<String, Object> map : userInfoList) {
-			userSb.append("<item>");
 			userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
-			userSb.append("</item>");
 		}
 		
 		String encodeStr = userSb.toString();
@@ -218,7 +214,7 @@ public class UserServiceImpl implements UserService {
 		if(i > 0) {
 			response = Util.getResponseForTrue(head, "");
 		} else {
-			response = Util.getResponseForFalse(xmlStr, head, "100", "反馈信息保存失败");
+			response = Util.getResponseForFalse(xmlStr, head, "101", "反馈信息保存失败");
 		}
 		
 		if(logger.isDebugEnabled()) {

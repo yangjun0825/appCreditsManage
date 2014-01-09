@@ -110,6 +110,13 @@ public class Util {
 			}
 			head.setVersion(version);
 		}
+		if (rootElment.element("code") != null) {
+			String code = rootElment.elementTextTrim("code");
+			if (null == code && "".equals(code)) {
+				code = "";
+			}
+			head.setCode(code);
+		}
 	}
 	
 
@@ -147,10 +154,10 @@ public class Util {
 			imei = "";
 		}
 		StringBuffer sb = new StringBuffer();
-		sb.append("<tjtresponse><bizcode>" + head.getBizcode() + "</bizcode><transid>" + head.getTransid()
+		sb.append("<tjtresponse><head><bizcode>" + head.getBizcode() + "</bizcode><transid>" + head.getTransid()
 				+ "</transid><timestamp>" + getDateFormat(new Date(), "yyyyMMddHHmmssSSS") + "</timestamp>");
 		sb.append("<imei>" + imei + "</imei><imsi>" + imsi + "</imsi><result>1</result><resultcode>" + errCode
-				+ "</resultcode><resultmsg>" + errStr + "</resultmsg></tjtresponse>");
+				+ "</resultcode><resultmsg>" + errStr + "</resultmsg></head></tjtresponse>");
 		return sb.toString();
 	}
 	
@@ -173,11 +180,11 @@ public class Util {
 		if (null == imei || "null".equals(imei)) {
 			imei = "";
 		}
-		sb.append("<tjtresponse><bizcode>" + head.getBizcode() + "</bizcode><transid>" + head.getTransid()
+		sb.append("<tjtresponse><head><bizcode>" + head.getBizcode() + "</bizcode><transid>" + head.getTransid()
 				+ "</transid><timestamp>" + getDateFormat(new Date(), "yyyyMMddHHmmssSSS") + "</timestamp>");
 		sb.append("<imei>" + imei + "</imei><imsi>" + imsi
 				+ "</imsi><result>0</result><resultcode>0</resultcode><resultmsg></resultmsg>");
-		sb.append("<svccont>" + encodeStr + "</svccont></tjtresponse>");
+		sb.append("<svccont>" + encodeStr + "</svccont></head></tjtresponse>");
 		return sb.toString();
 	}
 	

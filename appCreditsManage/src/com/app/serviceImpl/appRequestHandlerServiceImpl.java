@@ -7,6 +7,7 @@ import java.util.Date;
 
 import javax.jws.WebService;
 
+import org.apache.commons.codec.digest.DigestUtils;
 import org.apache.commons.lang.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
@@ -72,58 +73,74 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 				Document document = Util.stringToDocument(rqXmlstr);
 				Element rootElment = document.getRootElement();
 				Util.parseHeaderXml(head, rootElment);
-				String bizCode = head.getBizcode();
 				
-				if(StringUtils.isBlank(bizCode) || "null".equals(bizCode)) {
-					bizCode = "";
+				String code = head.getCode();
+				
+				String imei = head.getImei();
+				
+				String enCodeStr = imei + "  " + imei;
+				
+				enCodeStr = DigestUtils.md5Hex(enCodeStr);
+				
+				if(logger.isDebugEnabled()) {
+					logger.debug("[code] = " + code + " [imei] = " + imei + " [enCodeStr] = " + enCodeStr);
 				}
 				
-				//String rqXmlstr = Util.getDecodeStrForXml(rootElment, xmlStr);
-				
-				if (!flag || StringUtils.isNotBlank(bizCode)) {
+				if(!enCodeStr.equals(code)) {
+					result = Util.getResponseForFalse(rqXmlstr, head, "100", "请确保您是用手机并且不存在作弊行为!");
+				} else {
+					String bizCode = head.getBizcode();
 					
-					try {
-						switch (InterfaceType.getInterfaceType(bizCode)) {
-							case tjt001:
-								result = userService.userRegister(rqXmlstr, head);
-								break;
-							case tjt002:
-								result = userService.userLogin(rqXmlstr, head);
-								break;
-							case tjt003:
-								result = creditsService.userCreditsSysn(rqXmlstr, head);
-								break;
-							case tjt004:
-								result = creditsService.userCreditsRecords(rqXmlstr, head);
-								break;
-							case tjt005:
-								result = userService.userFeedBack(rqXmlstr, head);
-								break;
-							default:
-								flag = true;
-								break;
+					if(StringUtils.isBlank(bizCode) || "null".equals(bizCode)) {
+						bizCode = "";
+					}
+					
+					//String rqXmlstr = Util.getDecodeStrForXml(rootElment, xmlStr);
+					
+					if (!flag || StringUtils.isNotBlank(bizCode)) {
+						
+						try {
+							switch (InterfaceType.getInterfaceType(bizCode)) {
+								case tjt001:
+									result = userService.userRegister(rqXmlstr, head);
+									break;
+								case tjt002:
+									result = userService.userLogin(rqXmlstr, head);
+									break;
+								case tjt003:
+									result = creditsService.userCreditsSysn(rqXmlstr, head);
+									break;
+								case tjt004:
+									result = creditsService.userCreditsRecords(rqXmlstr, head);
+									break;
+								case tjt005:
+									result = userService.userFeedBack(rqXmlstr, head);
+									break;
+								default:
+									flag = true;
+									break;
+							}
+						} catch (Exception e){
+							logger.debug("[SystemError] = " + e.getMessage());
+							flag = true;
 						}
-					} catch (Exception e){
-						logger.debug("[SystemError] = " + e.getMessage());
+						
+					} else {
 						flag = true;
 					}
 					
-				} else {
-					flag = true;
+					if (flag) {
+						head.setBizcode("10000");
+						head.setTransid("100000012345678");
+						SimpleDateFormat sdfUUID = new SimpleDateFormat("yyyyMMddHHmmssSSS");
+						String str = sdfUUID.format(new Date());
+						head.setTimestamp(str);
+						head.setImei("100000012345678");
+						head.setImsi("100000012345678");
+						head.setCt("100000012345678");
+						return Util.getResponseForFalse(xmlStr, head, "100", "网络异常，请稍后重试");
+					}
 				}
-				
-				if (flag) {
-					head.setBizcode("10000");
-					head.setTransid("100000012345678");
-					SimpleDateFormat sdfUUID = new SimpleDateFormat("yyyyMMddHHmmssSSS");
-					String str = sdfUUID.format(new Date());
-					head.setTimestamp(str);
-					head.setImei("100000012345678");
-					head.setImsi("100000012345678");
-					head.setCt("100000012345678");
-					return Util.getResponseForFalse(xmlStr, head, "101", "程序产生不可知异常");
-				}
-				
 			}
 			
 			
