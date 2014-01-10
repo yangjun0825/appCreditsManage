@@ -231,7 +231,7 @@ public class CreditsServiceImpl implements CreditsService {
 				creditSb.append("</item>");
 			}
 		}
-		creditSb.append("<contentitem>");
+		creditSb.append("</contentitem>");
 		
 		String encodeStr = creditSb.toString();
 		if(logger.isDebugEnabled()) {

@@ -183,8 +183,8 @@ public class Util {
 		sb.append("<tjtresponse><head><bizcode>" + head.getBizcode() + "</bizcode><transid>" + head.getTransid()
 				+ "</transid><timestamp>" + getDateFormat(new Date(), "yyyyMMddHHmmssSSS") + "</timestamp>");
 		sb.append("<imei>" + imei + "</imei><imsi>" + imsi
-				+ "</imsi><result>0</result><resultcode>0</resultcode><resultmsg></resultmsg>");
-		sb.append("<svccont>" + encodeStr + "</svccont></head></tjtresponse>");
+				+ "</imsi><result>0</result><resultcode>0</resultcode><resultmsg></resultmsg></head>");
+		sb.append("<svccont>" + encodeStr + "</svccont></tjtresponse>");
 		return sb.toString();
 	}
 	
