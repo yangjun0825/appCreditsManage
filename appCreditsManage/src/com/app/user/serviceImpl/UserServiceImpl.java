@@ -134,6 +134,10 @@ public class UserServiceImpl implements UserService {
 			pwd = list.get(0).elementTextTrim("pwd");
 		}
 		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[account] = " + account + " [pwd] = " + pwd);
+		}
+		
 		if (StringUtils.isBlank(account) || StringUtils.isBlank(pwd)) {
 			response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
 			return response;
@@ -156,6 +160,7 @@ public class UserServiceImpl implements UserService {
 		
 		for(Map<String, Object> map : userInfoList) {
 			userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
+			userSb.append("<pendcredits>" + map.get("pendCredit") + "</pendcredits>");
 		}
 		
 		String encodeStr = userSb.toString();

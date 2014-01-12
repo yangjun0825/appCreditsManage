@@ -28,4 +28,15 @@ public interface CreditsService {
 	*/
 	public String userCreditsRecords(String xmlStr, Head head) throws Exception;
 	
+	/** 
+	* @Title: userWithdrawProcess 
+	* @Description: 处理用户提现请求
+	* @param  xmlStr
+	* @param  head
+	* @param @throws Exception    设定文件 
+	* @return String    返回类型 
+	* @throws 
+	*/
+	public String userWithdrawProcess(String xmlStr, Head head) throws Exception;
+	
 }

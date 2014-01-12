@@ -116,6 +116,9 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 								case tjt005:
 									result = userService.userFeedBack(rqXmlstr, head);
 									break;
+//								case tjt006:
+//									result = creditsService.userWithdrawProcess(rqXmlstr, head);
+//									break;
 								default:
 									flag = true;
 									break;

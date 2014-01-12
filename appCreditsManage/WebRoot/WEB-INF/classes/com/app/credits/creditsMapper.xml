@@ -10,10 +10,11 @@
 
 	<resultMap type="java.util.HashMap" id="creditsMap">
 		<result property="id" column="id" />
-		<result property="userid" column="userId" />
-		<result property="credit" column="password" />
+		<result property="account" column="account" />
+		<result property="credit" column="credit" />
 		<result property="credittype" column="creditType" />
 		<result property="channeltype" column="channelType" />
+		<result property="iscomplete" column="isComplete" />
 		<result property="createtime" column="createTime" />
 	</resultMap>
 
@@ -24,24 +25,45 @@
 		                       e.credit       as credit,
 		                       e.credittype   as creditType,
 		                       e.channeltype  as channelType,
+		                       e.iscomplete   as isComplete,
 		                       e.createtime   as createTime
 		                  from credit e
-		                 where e.credittype = #{creditType}
-		                   and e.account = #{account}
+		                 where e.account = #{account}
+		                   and e.credittype = #{creditType}
 	</select>
 	
 
 	<!-- 用户积分入库-->
-	<insert id="insertUserCredits" parameterType="com.app.user.bean.UserBean">
-		insert into credit(id, account, credit, credittype, channeltype, createtime)
-		      values(#{id}, #{account},  #{credit},  #{creditType}, #{channelType}, #{createTime}) 
+	<insert id="insertUserCredits" parameterType="com.app.credits.bean.CreditsBean">
+		insert into credit(id, account, credit, credittype, channeltype, iscomplete, createtime)
+		      values(#{id}, #{account},  #{credit},  #{creditType}, #{channelType}, #{isComplete}, #{createTime}) 
 	</insert>
 	
-	<!-- 更新用户总积分 -->
-	<update id="updateUserTotalCredit" parameterType="map">
+	<!-- 提现请求用户总积分 -->
+	<update id="updateUserTotalCreditForWithDraw" parameterType="map">
 		update user c
-   		   set c.totalcredit = CAST(c.totalcredit AS SIGNED) - CAST(#{credit} AS SIGNED)
+   		   set c.totalcredit = CAST(c.totalcredit AS SIGNED) - CAST(#{credit} AS SIGNED), c.pendcredit = CAST(c.pendcredit AS SIGNED) + CAST(#{credit} AS SIGNED)
+   		 where c.account = #{account}
 	</update>
 	
+	<!-- 增加用户总积分 -->
+	<update id="updateUserTotalCreditForAdd" parameterType="map">
+		update user c
+   		   set c.totalcredit = CAST(c.totalcredit AS SIGNED) + CAST(#{credit} AS SIGNED)
+   		 where c.account = #{account}
+	</update>
 	
+	<!-- 更新用户提现记录 -->
+	<update id="updateUserWithDrawMoney" parameterType="map">
+		update credit c
+   		   set c.credit = #{credit}
+   		 where c.credittype = #{creditType} and c.account = #{account}
+	</update>
+	
+	<!-- 更新用户信息 -->
+    <update id="updateUserInfo" parameterType="map">
+    	update user c
+   		   set c.zfbaccount = #{zfbAccount}
+   		 where c.account = #{account}
+    </update>	
 </mapper>

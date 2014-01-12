@@ -11,7 +11,9 @@
 	<resultMap type="java.util.HashMap" id="userMap">
 		<result property="account" column="account" />
 		<result property="password" column="password" />
-		<result property="totalcredit" column="totalCredit" />
+		<result property="totalcredit" column="totalCredit"/>
+		<result property="pendcredit" column="pendCredit"/>
+		<result property="zfbaccount" column="zfbAccount"/>
 		<result property="createtime" column="createTime" />
 	</resultMap>
 
@@ -20,6 +22,8 @@
 						select e.account       as account,
 		                       e.password      as password,
 		                       e.totalcredit   as totalCredit,
+		                       e.pendcredit    as pendCredit,
+		                       e.zfbaccount    as zfbAccount,
 		                       e.createtime    as createTime
 		                  from user e
 		                 where 1=1
@@ -32,8 +36,8 @@
 
 	<!-- 插入一个新用户 -->
 	<insert id="insertUser" parameterType="com.app.user.bean.UserBean">
-		insert into user(account, password, totalcredit, createtime)
-		      values(#{account},  #{password},  #{totalCredit},  #{createTime}) 
+		insert into user(account, password, createtime)
+		      values(#{account},  #{password}, #{createTime}) 
 	</insert>
 	
 </mapper>
