@@ -22,6 +22,7 @@ import com.app.user.service.UserService;
 import com.app.util.Base64;
 import com.app.util.InterfaceType;
 import com.app.util.Util;
+import com.app.version.service.VersionService;
 import com.app.vo.Head;
 
 @Component("requestHandler")  
@@ -35,6 +36,9 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 	
 	@Autowired
 	private CreditsService creditsService;
+	
+	@Autowired
+	private VersionService versionService;
 	
 	private Log logger = LogFactory.getLog(appRequestHandlerServiceImpl.class);	
 	
@@ -86,7 +90,7 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 					logger.debug("[code] = " + code + " [imei] = " + imei + " [enCodeStr] = " + enCodeStr);
 				}
 				
-				if(!enCodeStr.equals(code)) {
+				if(StringUtils.isBlank(imei) || !enCodeStr.equals(code)) {
 					result = Util.getResponseForFalse(rqXmlstr, head, "100", "请确保您是用手机并且不存在作弊行为!");
 				} else {
 					String bizCode = head.getBizcode();
@@ -116,9 +120,9 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 								case tjt005:
 									result = userService.userFeedBack(rqXmlstr, head);
 									break;
-//								case tjt006:
-//									result = creditsService.userWithdrawProcess(rqXmlstr, head);
-//									break;
+								case tjt006:
+									result = versionService.versionUpdate(rqXmlstr, head);
+									break;
 								default:
 									flag = true;
 									break;

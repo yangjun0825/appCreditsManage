@@ -13,9 +13,9 @@ import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
 
 public class Test {
     public static void main(String[] args) throws Exception {  
-    	JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();  
-        org.apache.cxf.endpoint.Client client = dcf.createClient("http://192.168.1.248:8828/appCreditsManage/services/requestServerHandler?wsdl");  
-        QName name=new QName("http://inter.app.com/","requestHandlerEnternce");  
+//    	JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();  
+//        org.apache.cxf.endpoint.Client client = dcf.createClient("http://192.168.1.248:8828/appCreditsManage/services/requestServerHandler?wsdl");  
+//        QName name=new QName("http://inter.app.com/","requestHandlerEnternce");  
         String xmlStr = "";  
         //注册
 //        xmlStr = "<tjtrequest>"
@@ -70,7 +70,10 @@ public class Test {
 //    	 + "<svccont>PHByYT48aXRlbT48YWNjb3V0PmJpZTwvYWNjb3V0Pjxtc2c+dGVzdOa1i+ivlTwvbXNnPjwvaXRlbT48L3ByYT4=</svccont>"
 //    	 + "</tjtrequest>";
         
-        Object[] objects=client.invoke(name,xmlStr);   
-        System.out.println("返回结果: " + objects[0].toString());  
+       // Object[] objects=client.invoke(name,xmlStr);   
+        //System.out.println("返回结果: " + objects[0].toString());  
+        String str = "1.0.2";
+        String a = str.replace(".", "");
+        System.out.println("a: " + a);
     }  
 }

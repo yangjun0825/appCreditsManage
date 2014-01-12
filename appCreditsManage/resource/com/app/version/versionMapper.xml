@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="version">
+
+	<resultMap type="java.util.HashMap" id="countMap">
+		<result property="totalCount" column="totalCount" />
+	</resultMap>
+
+	<resultMap type="java.util.HashMap" id="versionMap">
+		<result property="id" column="id" />
+		<result property="version" column="version" />
+		<result property="isnew" column="isNew"/>
+		<result property="isenforce" column="isEnforce"/>
+		<result property="vsdesc" column="vsDesc"/>
+		<result property="vspath" column="vsPath"/>
+		<result property="createtime" column="createTime" />
+	</resultMap>
+
+    <!--查询版本信息  -->
+	<select id="retrieveVersionInfo" parameterType="map" resultMap="versionMap">
+						select e.id         as id,
+		                       e.version    as version,
+		                       e.isnew      as isNew,
+		                       e.isenforce  as isEnforce,
+		                       e.vsdesc     as vsDesc,
+		                       e.vspath     as vsPath,
+		                       e.createtime as createTime
+		                  from version e
+						 order by createtime desc		                  
+	</select>
+	
+
+	<!-- 插入版本信息 -->
+	<insert id="insertVersionInfo" parameterType="com.app.version.bean.VersionBean">
+		insert into version(id, version, isnew, isenforce, vsdesc, vspath, createtime)
+		      values(#{id},  #{version}, #{isNew}, #{isEnforce}, #{vsDesc}, #{vsPath}, #{createTime}) 
+	</insert>
+	
+</mapper>
