@@ -3,13 +3,13 @@
 String path = request.getContextPath();
 String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.getServerPort()+path+"/";
 %>
-
+<%@taglib prefix="c"  uri="http://java.sun.com/jsp/jstl/core"%>
 <!DOCTYPE html>
 <html>
   <head>
     <base href="<%=basePath%>">
     
-    <title>登录页面</title>
+    <title>提现页面</title>
     
 	<meta http-equiv="pragma" content="no-cache">
 	<meta http-equiv="cache-control" content="no-cache">
@@ -30,88 +30,84 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<script type="text/javascript" src="<%=basePath%>ui/jquery.mobile-1.4.0.min.js"></script>
 	
 	<script type="text/javascript">
-		$(document).ready(function(){
-			
-			$('#submitLogin').bind('vclick',function() { 
-			
-				var result = filterProcess();
-				
-				if (result) {
-					var formData = $('#loginForm').serialize(); 
-		        	//.serialize() 方法创建以标准 URL 编码表示的文本字符串 
-		      		//alert("formData: " + formData);
-		        	$.ajax({ 
+
+		function withDraw(account, credit, id) {
+		
+			if("null" == pendCredit || "" == pendCredit || "0" == pendCredit) {
+				alert("该用户暂无可以提现的积分");
+				return;
+			}
+		
+			var r=confirm("确定完成此笔体现?");
+			if (r==true){
+			  	$.ajax({ 
 			            type : "POST", 
-			            url  : "<%=basePath%>pulseOxygen/submitOrder.shtml",  
+			            url  : "<%=basePath%>credit/withDraw.do",  
 			            cache : false, 
-			            data : formData, 
+			            data : {
+			            	'account':account,
+			            	'id':id,
+			            	'credit':credit
+			            }, 
 			            success : onSuccess, 
 			            error : onError 
-		        	}); 
-				}
-	        	
-	        	return false; 
-    		}); 
-    		
-			$("#device").css("width","100%");
-	    	$("#device").css("height",$(document.body).height()/2);
-		});
+		        }); 
+			} else {			  
+			  	//alert("You pressed Cancel!");
+			}
+		}
 		
 		function onSuccess(data,status){ 
-			
+			window.location.reload();		
 		} 
- 
+		
 		function onError(data,status){ 
     		//进行错误处理 
 		} 
-		
-		//提交订单之前的过滤处理
-		function filterProcess(){
-			var account=$.trim($("#account").val());
-				
-			if(account.length == 0){
-				$("#promptInfo").html("请输入姓名");
-				$("#openDialog").click();
-				//$("#mainPage").click();
-				return false;
-			}
-			
-			var password=$.trim($("#password").val());
-			
-			if(password.length == 0){
-				$("#promptInfo").html("请输入密码");
-				$("#openDialog").click();
-				return false;
-			}
-			return true;
-		}
 	</script>
 	
   </head>
   
   <body>
-    	<div id="userLogin" data-role="page">
+    	<div id="userCredit" data-role="page">
     		<div data-role="header">
-    			<h1>用户登录</h1>
+    			<h1>详细提现信息</h1>
     		</div>
     	
     		<div data-role="content">
-    			<a id="openDialog" href="#dialogPage" data-rel="dialog" data-transition="pop" style="display:none"  data-overlay-theme="a"></a> 
-    			<form id="loginForm" data-transition="pop">
-					<div data-role="fieldcontainer">
-						<label for="name">用户名：</label>
-						<input type="text" id="account" name="account" value=""/>
-						<input type="hidden" name="account" value=""/>
-					</div>
-					<div data-role="fieldcontainer">
-						<label for="password">密码：</label>
-						<input type="text" id="password" name="password" value=""/>
-					</div>
-					<div data-role="fieldcontainer">
-						<label for="submitLogin"></label>
-						<button id="submitLogin" type="submit">登录</button>
-					</div>
-				</form>
+    			<div data-role="content">
+    			
+	    			<table data-role="table" id="movie-table-custom" data-mode="reflow" class="movie-list ui-responsive">
+						  <thead>
+						    <tr>
+						      <th data-priority="1">用户</th>
+						      <th style="width:25%">提现类别</th>
+						      <th data-priority="2">账户</th>
+						      <th data-priority="3">积分</th>
+						      <th data-priority="4">操作</th>
+						    </tr>
+						  </thead>
+						  <tbody>
+						  	<c:forEach items="${wdCreditsList}" var="wdCredit">
+						  		<tr>
+							      <th>${wdCredit.account}</th>
+							      <c:if test="${wdCredit.cashType eq '1'}">
+							      		<td>支付宝</td>
+							      </c:if>
+							      <c:if test="${wdCredit.cashType eq '2'}">
+							      		<td>qq币</td>
+							      </c:if>
+							      <c:if test="${wdCredit.cashType eq '3'}">
+							      		<td>话费</td>
+							      </c:if>
+							      <td>${wdCredit.cashAccount}</td>
+							      <td>${wdCredit.credit}</td>
+							      <td><a href="#"  onclick="withDraw('${wdCredit.account}','${wdCredit.credit}','${wdCredit.id}')">提现</a></td>
+							    </tr>
+						  	</c:forEach>
+						  </tbody>
+						</table>
+	    		</div>
     		</div>
 			    	
     		<div data-role="footer" data-position="fixed">
@@ -126,7 +122,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		<div data-role="content">
 			<p id="promptInfo"></p>
 			<!-- <a data-role="button" data-rel="back" data-theme="b" onclick="$('.ui-dialog').dialog('close'); return false;">确定</a>  -->     
-			<a href="#userLogin" data-role="button" data-rel="back" data-theme="b">关闭</a>
+			<a href="#userCredit" data-role="button" data-rel="back" data-theme="b">关闭</a>
 		</div>
 		<!-- /content -->
 		<div data-role="footer" align="center" data-position="fixed" data-theme="b">

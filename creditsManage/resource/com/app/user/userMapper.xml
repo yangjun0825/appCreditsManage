@@ -27,10 +27,13 @@
 		                       e.createtime    as createTime
 		                  from user e
 		                 where 1=1
-		                   and e.account = #{account}
+		                 <if test="account != null">
+		                 	and e.account = #{account}
+		                 </if>
 		                 <if test="password != null">
-						   and e.password = #{password}
+						    and e.password = #{password}
 						 </if>
+						 order by pendcredit desc
 	</select>
 	
 

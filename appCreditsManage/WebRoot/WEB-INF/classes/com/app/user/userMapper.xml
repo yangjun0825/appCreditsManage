@@ -14,6 +14,8 @@
 		<result property="totalcredit" column="totalCredit"/>
 		<result property="pendcredit" column="pendCredit"/>
 		<result property="zfbaccount" column="zfbAccount"/>
+		<result property="telaccount" column="telAccount"/>
+		<result property="qqaccount" column="qqAccount"/>
 		<result property="createtime" column="createTime" />
 	</resultMap>
 
@@ -24,6 +26,8 @@
 		                       e.totalcredit   as totalCredit,
 		                       e.pendcredit    as pendCredit,
 		                       e.zfbaccount    as zfbAccount,
+		                       e.telaccount    as telAccount,
+		                       e.qqaccount     as qqAccount,
 		                       e.createtime    as createTime
 		                  from user e
 		                 where 1=1
@@ -40,4 +44,21 @@
 		      values(#{account},  #{password}, #{createTime}) 
 	</insert>
 	
+	<!-- 修改用户信息 -->
+	<update id="updateUserInfo" parameterType="map">
+		update user
+		   set createtime=#{createTime}
+		   <if test="zfbAccount != null">
+		   	   ,zfbaccount = #{zfbAccount}
+		   </if>
+		   
+		   <if test="telAccount != null">
+		   	   ,telaccount = #{telAccount}
+		   </if>
+		   
+		   <if test="qqAccount != null">
+		   	   ,qqaccount = #{qqAccount}
+		   </if>
+		 where account = #{account}
+	</update>
 </mapper>

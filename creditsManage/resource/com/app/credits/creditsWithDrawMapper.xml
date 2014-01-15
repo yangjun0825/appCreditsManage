@@ -1,0 +1,49 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" 
+"http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+<mapper namespace="creditsWithDraw">
+
+	<resultMap type="java.util.HashMap" id="countMap">
+		<result property="totalCount" column="totalCount" />
+	</resultMap>
+
+	<resultMap type="java.util.HashMap" id="creditsWithDrawMap">
+		<result property="id" column="id" />
+		<result property="account" column="account" />
+		<result property="credit" column="credit" />
+		<result property="cashtype" column="cashType" />
+		<result property="cashaccount" column="cashAccount" />
+		<result property="iscomplete" column="isComplete" />
+		<result property="createtime" column="createTime" />
+	</resultMap>
+
+    <!--根据条件获取体现记录  -->
+	<select id="retrieveWdCreditsRecords" parameterType="map" resultMap="creditsWithDrawMap">
+						select e.id           as id,
+		                       e.account      as account,
+		                       e.credit       as credit,
+		                       e.cashtype     as cashType,
+		                       e.cashaccount   as cashAccount,
+		                       e.iscomplete   as isComplete,
+		                       e.createtime   as createTime
+		                  from withdrawcredit e
+		                 where e.account = #{account}
+		                   and e.iscomplete = #{isComplete}
+	</select>
+	
+
+	<!-- 用户提现积分入库-->
+	<insert id="insertUserWdCredits" parameterType="com.app.credits.bean.WithDrawBean">
+		insert into withdrawcredit(id, account, credit, cashtype, cashaccount, iscomplete, createtime)
+		      values(#{id}, #{account},  #{credit},  #{cashtype}, #{cashaccount}, #{isComplete}, #{createTime}) 
+	</insert>
+	
+	<!-- 修改用户提现积分状态 -->
+	<update id="updateWdCreditInfo" parameterType="map">
+		update withdrawcredit w
+		   set iscomplete = #{isComplete}
+		 where id = #{id}
+	</update>
+	
+</mapper>

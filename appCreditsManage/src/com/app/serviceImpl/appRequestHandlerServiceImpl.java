@@ -123,6 +123,9 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 								case tjt006:
 									result = versionService.versionUpdate(rqXmlstr, head);
 									break;
+								case tjt007:
+									result = userService.userInfoModify(rqXmlstr, head);
+									break;
 								default:
 									flag = true;
 									break;

@@ -13,6 +13,7 @@
 		<mapper resource="com/yiyacare/resources/user/UserMapper.xml"/>
 		 -->
 		 <mapper resource="com/app/credits/creditsMapper.xml"/>
+		 <mapper resource="com/app/credits/creditsWithDrawMapper.xml"/>
 		 <mapper resource="com/app/user/userFeedBackMapper.xml"/>
 		 <mapper resource="com/app/user/userMapper.xml"/>
 	</mappers>

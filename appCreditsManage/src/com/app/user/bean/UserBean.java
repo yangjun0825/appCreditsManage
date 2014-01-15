@@ -36,6 +36,16 @@ public class UserBean {
 	private String zfbAccount;
 	
 	/** 
+	* @Fields telAccount : 电话账户 
+	*/ 
+	private String telAccount;
+	
+	/** 
+	* @Fields qqAccount : qq账户
+	*/ 
+	private String qqAccount;
+	
+	/** 
 	* @Fields createTime : 创建时间
 	*/ 
 	private Date createTime;
@@ -86,6 +96,22 @@ public class UserBean {
 
 	public void setZfbAccount(String zfbAccount) {
 		this.zfbAccount = zfbAccount;
+	}
+
+	public String getTelAccount() {
+		return telAccount;
+	}
+
+	public void setTelAccount(String telAccount) {
+		this.telAccount = telAccount;
+	}
+
+	public String getQqAccount() {
+		return qqAccount;
+	}
+
+	public void setQqAccount(String qqAccount) {
+		this.qqAccount = qqAccount;
 	}
 	
 	

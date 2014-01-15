@@ -13,22 +13,12 @@ public class Constant {
 	public static final String withdraw_credit = "2";
 	
 	/** 
-	* @Fields withdraw_request : 提现请求 
+	* @Fields complete_withdraw : 完成提现
 	*/ 
-	public static final String withdraw_request = "1";
-	
-	/** 
-	* @Fields withdraw_complete : 完成提现 
-	*/ 
-	public static final String withdraw_complete = "2";
+	public static final String complete_withdraw = "1";
 	
 	/** 
 	* @Fields not_complete_withdraw : 没有完成提现
 	*/ 
-	public static final String not_complete_withdraw = "0";
-	
-	/** 
-	* @Fields complete_withdraw : 完成提现
-	*/ 
-	public static final String complete_withdraw = "0";
+	public static final String not_complete_withdraw = "2";
 }

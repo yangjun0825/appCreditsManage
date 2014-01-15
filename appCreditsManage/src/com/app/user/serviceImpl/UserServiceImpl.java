@@ -161,6 +161,9 @@ public class UserServiceImpl implements UserService {
 		for(Map<String, Object> map : userInfoList) {
 			userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
 			userSb.append("<pendcredits>" + map.get("pendCredit") + "</pendcredits>");
+			userSb.append("<zfbaccout>" + map.get("zfbaccount") + "</zfbaccout>");
+			userSb.append("<telaccout>" + map.get("telaccount") + "</telaccout>");
+			userSb.append("<qqaccout>" + map.get("qqaccount") + "</qqaccout>");
 		}
 		
 		String encodeStr = userSb.toString();
@@ -225,6 +228,104 @@ public class UserServiceImpl implements UserService {
 		if(logger.isDebugEnabled()) {
 			logger.debug("[response] = " + response);
 		}
+		
+		logger.debug("exit UserServiceImpl.userFeedBack(String xmlStr, Head head)");
+		return response;
+	}
+
+	/* (非 Javadoc) 
+	* <p>Title: userInfoModify</p> 
+	* <p>Description:修改用户信息 </p> 
+	* @param xmlStr
+	* @param head
+	* @return
+	* @throws Exception 
+	* @see com.app.user.service.UserService#userInfoModify(java.lang.String, com.app.vo.Head) 
+	*/
+	@Override
+	public String userInfoModify(String xmlStr, Head head) throws Exception {
+		logger.debug("enter UserServiceImpl.userFeedBack(String xmlStr, Head head)");
+		
+		String response = "";
+		
+		List<Element> list = Util.getRequestDataByXmlStr(xmlStr, "svccont/pra/item");
+		
+		String account = "";
+		String zfbAccount  = "";
+		String telAccount  = "";
+		String qqAccount  = "";
+		
+		if(CollectionUtils.isNotEmpty(list)) {
+			account = list.get(0).elementTextTrim("accout");
+			zfbAccount = list.get(0).elementTextTrim("zfbaccout");
+			telAccount = list.get(0).elementTextTrim("telaccout");
+			qqAccount = list.get(0).elementTextTrim("qqaccout"); 
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[account] = " + account + " [zfbAccount] = " + zfbAccount 
+					  + " [telAccount] = " + telAccount + " [qqAccount] = " + qqAccount);
+		}
+		
+		String updateStr = "user.updateUserInfo";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("account", account);
+		params.put("createTime", new Date());
+		
+		
+		if(StringUtils.isNotBlank(zfbAccount)) {
+			params.put("zfbAccount", zfbAccount);
+		}
+		
+		if(StringUtils.isNotBlank(telAccount)) {
+			params.put("telAccount", telAccount);
+		}
+		
+		if(StringUtils.isNotBlank(qqAccount)) {
+			params.put("qqAccount", qqAccount);
+		}
+		
+		int i = userDao.update(updateStr, params);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[UserInfoDbUpdateResult] = " + i);
+		}
+		
+		//获取用户信息
+		String queryStr = "user.retrieveUserInfo";
+		
+		Map<String, Object> userParams = new HashMap<String, Object>();
+		userParams.put("account", account);
+		List<Map<String, Object>> userInfoList = userDao.getSearchList(queryStr, userParams);
+		
+		if(CollectionUtils.isEmpty(userInfoList)) {
+			response = Util.getResponseForFalse(xmlStr, head, "103", "该账号不存在");
+			return response;
+		}
+		
+		StringBuffer userSb = new StringBuffer();
+		
+		for(Map<String, Object> map : userInfoList) {
+			userSb.append("<accont>" + map.get("account") + "</accont>");
+			userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
+			userSb.append("<pendcredits>" + map.get("pendCredit") + "</pendcredits>");
+			userSb.append("<zfbaccout>" + map.get("zfbaccount") + "</zfbaccout>");
+			userSb.append("<telaccout>" + map.get("telaccount") + "</telaccout>");
+			userSb.append("<qqaccout>" + map.get("qqaccount") + "</qqaccout>");
+		}
+		
+		String encodeStr = userSb.toString();
+		if(logger.isDebugEnabled()) {
+			logger.debug("[encodeStr] = " + encodeStr);
+		}
+		
+		response = Util.getResponseForTrue(head, encodeStr);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[response] = " + response);
+		}
+		
 		
 		logger.debug("exit UserServiceImpl.userFeedBack(String xmlStr, Head head)");
 		return response;

@@ -41,4 +41,15 @@ public interface UserService {
 	*/
 	public String userFeedBack(String xmlStr, Head head) throws Exception;
 	
+	/** 
+	* @Title: userInfoModify 
+	* @Description: 用户信息修改 
+	* @param  xmlStr
+	* @param  head
+	* @param @throws Exception    设定文件 
+	* @return String    返回类型 
+	* @throws 
+	*/
+	public String userInfoModify(String xmlStr, Head head) throws Exception;
+	
 }

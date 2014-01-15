@@ -15,6 +15,7 @@ import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
 import com.app.credits.bean.CreditsBean;
+import com.app.credits.bean.WithDrawBean;
 import com.app.credits.service.CreditsService;
 import com.app.util.Constant;
 import com.app.util.MyBatisDao;
@@ -52,20 +53,20 @@ public class CreditsServiceImpl implements CreditsService {
 		String account = "";
 		String type = "";
 		String credit = "";
-		String channelType = "";
-		String zfbAccount = "";
+		String cashType = "";
+		String cashAccount = "";
 		
 		if(CollectionUtils.isNotEmpty(list)) {
 			account = list.get(0).elementTextTrim("accout");
 			type = list.get(0).elementTextTrim("type");
 			credit = list.get(0).elementTextTrim("credit");
-			zfbAccount = list.get(0).elementTextTrim("zfbaccout");
-			channelType = list.get(0).elementTextTrim("channelType");
+			cashType = list.get(0).elementTextTrim("cashtype");
+			cashAccount = list.get(0).elementTextTrim("cashaccout");
 		}
 		
 		if(logger.isDebugEnabled()) {
 			logger.debug("[account] = " + account + " [type] = " + type + " [credit] = " + credit 
-					  + " [channelType] = " + channelType + " [zfbAccount] = " + zfbAccount);
+					  + " [cashType] = " + cashType + " [cashAccount] = " + cashAccount);
 		}
 		
 		if (StringUtils.isBlank(account) || StringUtils.isBlank(type)
@@ -75,7 +76,7 @@ public class CreditsServiceImpl implements CreditsService {
 		}
 		
 		if(Constant.withdraw_credit.equals(type)) {
-			if(StringUtils.isBlank(zfbAccount)) {
+			if(StringUtils.isBlank(cashAccount) || StringUtils.isBlank(cashType)) {
 				response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
 				return response;
 			}
@@ -142,33 +143,22 @@ public class CreditsServiceImpl implements CreditsService {
 				
 				if(totalCredit_i - credit_i >= 0) {
 					
-					String updateZfbStr = "credits.updateUserInfo";
-					Map<String, Object> paramZfbs = new HashMap<String, Object>();
-					paramZfbs.put("zfbAccount", zfbAccount);
-					paramZfbs.put("account", account);
-					int m = creditsDao.update(updateZfbStr, paramZfbs);
-					
-					if(logger.isDebugEnabled()) {
-						logger.debug("[creditDbZfbUpdateResult] = " + m);
-					}
-					
-					
 					//积分入库积分记录表
-					String insertStr = "credits.insertUserCredits";
+					String insertStr = "creditsWithDraw.insertUserWdCredits";
 					
-					CreditsBean creditsBean = new CreditsBean();
-					creditsBean.setId(UUID.randomUUID().toString());
-					creditsBean.setAccount(account);
-					creditsBean.setCredit(credit);
-					creditsBean.setCreditType(type);
-					creditsBean.setChannelType(channelType);
-					creditsBean.setIsComplete(Constant.not_complete_withdraw);
-					creditsBean.setCreateTime(new Date());
+					WithDrawBean withDrawBean = new WithDrawBean();
+					withDrawBean.setId(UUID.randomUUID().toString());
+					withDrawBean.setAccount(account);
+					withDrawBean.setCredit(credit);
+					withDrawBean.setCashType(cashType);
+					withDrawBean.setCashAccount(cashAccount);
+					withDrawBean.setIsComplete(Constant.not_complete_withdraw);
+					withDrawBean.setCreateTime(new Date());
 					
-					int i = creditsDao.insert(insertStr, creditsBean);
+					int i = creditsDao.insert(insertStr, withDrawBean);
 					
 					if(logger.isDebugEnabled()) {
-						logger.debug("[creditDbInsertResult] = " + i);
+						logger.debug("[creditDbInsertWsResult] = " + i);
 					}
 					
 					if(i > 0) {
@@ -274,9 +264,9 @@ public class CreditsServiceImpl implements CreditsService {
 		//获取用户积分记录
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("account", account);
-		params.put("creditType", Constant.withdraw_credit);
+		params.put("isComplete", Constant.not_complete_withdraw);
 		
-		String queryStr = "credits.retrieveCreditsRecords";
+		String queryStr = "creditsWithDraw.retrieveWdCreditsRecords";
 		List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryStr, params);
 		
 		if(logger.isDebugEnabled()) {
@@ -292,6 +282,8 @@ public class CreditsServiceImpl implements CreditsService {
 				creditSb.append("<item>");
 				creditSb.append("<time>" + map.get("createtime") + "</time>");
 				creditSb.append("<credit>" + map.get("credit") + "</credit>");
+				creditSb.append("<cashtype>" + map.get("cashtype") + "</cashtype>");
+				creditSb.append("<cashaccount>" + map.get("cashaccount") + "</cashaccount>");
 				creditSb.append("<comtype>" + map.get("iscomplete") + "</comtype>");
 				creditSb.append("</item>");
 			}

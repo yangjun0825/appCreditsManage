@@ -66,4 +66,19 @@
    		   set c.zfbaccount = #{zfbAccount}
    		 where c.account = #{account}
     </update>	
+    
+    <!-- 更新用户待提现积分 -->
+    <update id="updateUserPendCredit" parameterType="map">
+    	update user u
+   		   set u.pendcredit = CAST(c.pendcredit AS SIGNED) - CAST(#{credit} AS SIGNED)
+   		 where u.account = #{account}
+    </update>
+    
+    <!-- 更新用户待处理提现状态为已完成 -->
+    <update id="updateUserCreditComplete" parameterType="map">
+		update credit c
+   		   set c.iscomplete = #{isComplete}
+   		 where c.credittype = #{creditType} and c.account = #{account}
+	</update>
+    
 </mapper>
