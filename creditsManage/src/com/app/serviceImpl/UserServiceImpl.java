@@ -47,7 +47,7 @@ public class UserServiceImpl implements UserService {
 			
 			for(Map<String, Object> map : userInfoList) {
 				UserBean userBean = new UserBean();
-				
+				userBean.setTotalCredit((String)map.get("totalcredit"));
 				userBean.setAccount((String)map.get("account"));
 				userBean.setPassword((String)map.get("password"));
 				userBean.setPendCredit((String)map.get("pendcredit"));

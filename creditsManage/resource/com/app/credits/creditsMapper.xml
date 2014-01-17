@@ -70,7 +70,7 @@
     <!-- 更新用户待提现积分 -->
     <update id="updateUserPendCredit" parameterType="map">
     	update user u
-   		   set u.pendcredit = CAST(c.pendcredit AS SIGNED) - CAST(#{credit} AS SIGNED)
+   		   set u.pendcredit = CAST(u.pendcredit AS SIGNED) - CAST((select credit from withdrawcredit w where w.id = #{id}) AS SIGNED)
    		 where u.account = #{account}
     </update>
     

@@ -7,6 +7,8 @@ import java.util.Map;
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
+import org.apache.commons.collections4.CollectionUtils;
+import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -84,11 +86,19 @@ public class CreditController {
 		params.put("account",account);
 		params.put("isComplete",Constant.not_complete_withdraw);
 		List<WithDrawBean> wdCreditsList = creditService.retrieveCreditWitHDrawList(params);
-		WithDrawBean bean = new WithDrawBean();
-		bean.setAccount("1212121");
-		bean.setCashType("1");
-		bean.setCashAccount("aasdasdf");
-		wdCreditsList.add(bean);
+		
+		if(CollectionUtils.isNotEmpty(wdCreditsList)) {
+			for(WithDrawBean bean : wdCreditsList) {
+				String credit = bean.getCredit();
+				
+				if(StringUtils.isNotBlank(credit)) {
+					double credit_d = Double.parseDouble(credit);
+					credit_d = credit_d/100;
+					bean.setCredit(credit_d+"");
+				}
+			}
+		}
+		
 		mav.addObject("wdCreditsList", wdCreditsList);
 		
 		mav.setViewName("/view/creditWithDrawDetailList");

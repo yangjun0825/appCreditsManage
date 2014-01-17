@@ -25,6 +25,10 @@
 		<property name="initialSize" value="${initialSize}" />
 		<property name="maxActive" value="${maxActive}" />
 		<property name="maxWait" value="${maxWait}" />
+		<property name="maxIdle" value="${maxIdle}" />
+		<property name="minIdle" value="${minIdle}" />
+		<property name="testOnBorrow" value="${testOnBorrow}" />
+		<property name="validationQuery" value="${validationQuery}" />
 		<property name="poolPreparedStatements" value="true" />
 	</bean>
 

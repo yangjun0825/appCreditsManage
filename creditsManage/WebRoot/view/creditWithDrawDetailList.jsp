@@ -33,7 +33,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 
 		function withDraw(account, credit, id) {
 		
-			if("null" == pendCredit || "" == pendCredit || "0" == pendCredit) {
+			if("null" == credit || "" == credit || "0" == credit) {
 				alert("该用户暂无可以提现的积分");
 				return;
 			}
@@ -101,7 +101,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 							      		<td>话费</td>
 							      </c:if>
 							      <td>${wdCredit.cashAccount}</td>
-							      <td>${wdCredit.credit}</td>
+							      <td>${wdCredit.credit}元</td>
 							      <td><a href="#"  onclick="withDraw('${wdCredit.account}','${wdCredit.credit}','${wdCredit.id}')">提现</a></td>
 							    </tr>
 						  	</c:forEach>

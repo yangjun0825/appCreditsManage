@@ -264,7 +264,7 @@ public class CreditsServiceImpl implements CreditsService {
 		//获取用户积分记录
 		Map<String, Object> params = new HashMap<String, Object>();
 		params.put("account", account);
-		params.put("isComplete", Constant.not_complete_withdraw);
+		//params.put("isComplete", Constant.not_complete_withdraw);
 		
 		String queryStr = "creditsWithDraw.retrieveWdCreditsRecords";
 		List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryStr, params);

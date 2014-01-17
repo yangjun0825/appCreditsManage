@@ -11,7 +11,6 @@ import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
-import com.app.credits.bean.CreditsBean;
 import com.app.credits.bean.WithDrawBean;
 import com.app.service.CreditService;
 import com.app.util.Constant;
@@ -50,6 +49,7 @@ public class CreditServiceImpl implements CreditService {
 			for(Map<String, Object> map : creditsRecordsList) {
 				WithDrawBean withDrawBean = new WithDrawBean();
 				withDrawBean.setId((String)map.get("id"));
+				withDrawBean.setAccount((String)map.get("account"));
 				withDrawBean.setCashType((String)map.get("cashtype"));
 				withDrawBean.setCashAccount((String)map.get("cashaccount"));
 				withDrawBean.setCredit((String)map.get("credit"));

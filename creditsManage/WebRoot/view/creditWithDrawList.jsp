@@ -78,7 +78,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    			<ul data-role="listview">
 	    				<c:forEach items="${userList}" var="user">
 		   					<li>
-		   						<a href="<%=basePath%>credit/showCreditWdDetailList.do?account=${user.account}" >用户:${user.account},积分：${user.pendCredit}</a>
+		   						<a href="<%=basePath%>credit/showCreditWdDetailList.do?account=${user.account}" >用户:${user.account}, 总积分:${user.totalCredit} ,待提现积分：${user.pendCredit}</a>
 		   					</li>
 	   					</c:forEach>
 	   				</ul>

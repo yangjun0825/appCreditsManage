@@ -160,7 +160,7 @@ public class UserServiceImpl implements UserService {
 		
 		for(Map<String, Object> map : userInfoList) {
 			userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
-			userSb.append("<pendcredits>" + map.get("pendCredit") + "</pendcredits>");
+			userSb.append("<pendcredits>" + map.get("pendcredit") + "</pendcredits>");
 			userSb.append("<zfbaccout>" + map.get("zfbaccount") + "</zfbaccout>");
 			userSb.append("<telaccout>" + map.get("telaccount") + "</telaccout>");
 			userSb.append("<qqaccout>" + map.get("qqaccount") + "</qqaccout>");

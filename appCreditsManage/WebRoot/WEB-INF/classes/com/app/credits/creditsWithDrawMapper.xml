@@ -29,7 +29,11 @@
 		                       e.createtime   as createTime
 		                  from withdrawcredit e
 		                 where e.account = #{account}
-		                   and e.iscomplete = #{isComplete}
+		                   <if test="isComplete != null">
+		                   		and e.iscomplete = #{isComplete}
+		                   </if>
+		                   order by createtime desc
+		                   
 	</select>
 	
 
