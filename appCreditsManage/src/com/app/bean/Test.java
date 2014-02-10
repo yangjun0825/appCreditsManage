@@ -2,12 +2,15 @@ package com.app.bean;
 
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
+import java.util.HashSet;
 
 import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
 import javax.xml.rpc.ServiceException;
 
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
+
+import com.app.util.Util;
 
 
 
@@ -75,5 +78,16 @@ public class Test {
         String str = "1.0.2";
         String a = str.replace(".", "");
         System.out.println("a: " + a);
+        
+        int i = 11111111;
+        
+        HashSet<Integer> set = new HashSet<Integer>();  
+	    Util.randomSet(10000000,99999999,1,set);
+	    
+	    int accountRandom = 0;
+	    
+	    for (int j : set) {  
+	    	System.out.println("a: " + j);
+	    }  
     }  
 }

@@ -22,6 +22,16 @@ public interface UserService {
 	public String userRegister(String xmlStr, Head head) throws Exception ;
 	
 	/** 
+	* @Title: userRegister 
+	* @Description: 用户自动注册
+	* @param  xmlStr
+	* @param  head
+	* @return String    返回类型 
+	* @throws 
+	*/
+	public String userAutoRegister(String xmlStr, Head head) throws Exception ;
+	
+	/** 
 	* @Title: userLogin 
 	* @Description: 用户登录
 	* @param  xmlStr

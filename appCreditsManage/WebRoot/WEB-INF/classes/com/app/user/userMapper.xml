@@ -16,6 +16,8 @@
 		<result property="zfbaccount" column="zfbAccount"/>
 		<result property="telaccount" column="telAccount"/>
 		<result property="qqaccount" column="qqAccount"/>
+		<result property="linkid" column="linkId"/>
+		<result property="imei" column="imei"/>
 		<result property="createtime" column="createTime" />
 	</resultMap>
 
@@ -28,10 +30,17 @@
 		                       e.zfbaccount    as zfbAccount,
 		                       e.telaccount    as telAccount,
 		                       e.qqaccount     as qqAccount,
+		                       e.linkid        as linkId,
+		                       e.imei          as imei,
 		                       e.createtime    as createTime
 		                  from user e
 		                 where 1=1
-		                   and e.account = #{account}
+		                 <if test="account != null">
+		                 	and e.account = #{account}
+		                 </if>
+		                 <if test="imei != null">
+		                 	and e.imei = #{imei}
+		                 </if>  
 		                 <if test="password != null">
 						   and e.password = #{password}
 						 </if>
@@ -40,8 +49,8 @@
 
 	<!-- 插入一个新用户 -->
 	<insert id="insertUser" parameterType="com.app.user.bean.UserBean">
-		insert into user(account, password, createtime)
-		      values(#{account},  #{password}, #{createTime}) 
+		insert into user(account, password, linkid, imei, createtime)
+		      values(#{account},  #{password}, #{linkId}, #{imei},#{createTime}) 
 	</insert>
 	
 	<!-- 修改用户信息 -->

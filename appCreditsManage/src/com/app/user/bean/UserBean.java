@@ -46,6 +46,16 @@ public class UserBean {
 	private String qqAccount;
 	
 	/** 
+	* @Fields linkId : 用户推广上限用户账号
+	*/ 
+	private String linkId;
+	
+	/** 
+	* @Fields imei : 手机IMEI 
+	*/ 
+	private String imei;
+	
+	/** 
 	* @Fields createTime : 创建时间
 	*/ 
 	private Date createTime;
@@ -112,6 +122,22 @@ public class UserBean {
 
 	public void setQqAccount(String qqAccount) {
 		this.qqAccount = qqAccount;
+	}
+
+	public String getLinkId() {
+		return linkId;
+	}
+
+	public void setLinkId(String linkId) {
+		this.linkId = linkId;
+	}
+
+	public String getImei() {
+		return imei;
+	}
+
+	public void setImei(String imei) {
+		this.imei = imei;
 	}
 	
 	

@@ -2,6 +2,7 @@ package com.app.user.serviceImpl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -328,6 +329,129 @@ public class UserServiceImpl implements UserService {
 		
 		
 		logger.debug("exit UserServiceImpl.userFeedBack(String xmlStr, Head head)");
+		return response;
+	}
+
+	/* (非 Javadoc) 
+	* <p>Title: userAutoRegister</p> 
+	* <p>Description: 用户自动注册</p> 
+	* @param xmlStr
+	* @param head
+	* @return
+	* @throws Exception 
+	* @see com.app.user.service.UserService#userAutoRegister(java.lang.String, com.app.vo.Head) 
+	*/
+	@Override
+	public String userAutoRegister(String xmlStr, Head head) throws Exception {
+		logger.debug("enter UserServiceImpl.userAutoRegister(String xmlStr, Head head)");
+		
+		String response = "";
+		
+		List<Element> list = Util.getRequestDataByXmlStr(xmlStr, "svccont/pra/item");
+		
+		String imei = "";
+		String linkId  = "";
+		
+		if(CollectionUtils.isNotEmpty(list)) {
+			imei = list.get(0).elementTextTrim("imei");
+			linkId = list.get(0).elementTextTrim("linkid");
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[imei] = " + imei + " [linkId] = " + linkId);
+		}
+		
+		if (StringUtils.isBlank(imei)) {
+			response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
+			return response;
+		}
+		
+		//查询该IMEI是否存在
+		String queryStr = "user.retrieveUserInfo";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("imei", imei);
+		List<Map<String, Object>> userInfoList = userDao.getSearchList(queryStr, params);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[userInfoList] = " + userInfoList);
+			if(userInfoList != null) {
+				logger.debug("[userInfoListSize] = " + userInfoList.size());
+			}
+		}
+		
+		//如果查询到数据，说明该手机已经注册过
+		if(CollectionUtils.isNotEmpty(userInfoList)) {
+			StringBuffer userSb = new StringBuffer();
+			
+			for(Map<String, Object> map : userInfoList) {
+				userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
+				userSb.append("<pendcredits>" + map.get("pendcredit") + "</pendcredits>");
+				userSb.append("<zfbaccout>" + map.get("zfbaccount") + "</zfbaccout>");
+				userSb.append("<telaccout>" + map.get("telaccount") + "</telaccout>");
+				userSb.append("<qqaccout>" + map.get("qqaccount") + "</qqaccout>");
+			}
+			
+			String encodeStr = userSb.toString();
+			if(logger.isDebugEnabled()) {
+				logger.debug("[encodeStr] = " + encodeStr);
+			}
+			
+			return Util.getResponseForTrue(head, encodeStr);
+		}
+		
+		//生成一个8位的随机数字账号
+		HashSet<Integer> set = new HashSet<Integer>();  
+	    Util.randomSet(10000000,99999999,1,set);
+	    
+	    int accountRandom = 0;
+	    
+	    for (int j : set) {  
+	    	accountRandom = j;
+	    }  
+		
+	    if(logger.isDebugEnabled()) {
+	    	logger.debug("[accountRandom] = " + accountRandom);
+	    }
+	    
+	    //用户信息入库
+		UserBean userBean = new UserBean();
+		userBean.setAccount(accountRandom + "");
+		userBean.setPassword("aizanqi");
+		userBean.setTotalCredit("10");
+		userBean.setImei(imei);
+		
+		if(StringUtils.isNotBlank(linkId)) {
+			userBean.setLinkId(linkId);
+		}
+		
+		userBean.setCreateTime(new Date());
+		String insertStr = "user.insertUser";
+		int i = userDao.insert(insertStr, userBean);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[registerDb2InsertResult] = " + i);
+		}
+	    
+		//如果数据插入成功，则返回信息
+		if(i > 0) {
+			StringBuffer userSb = new StringBuffer();
+			userSb.append("<accout>" + accountRandom + "</accout>");
+			userSb.append("<credit>10</credit>");
+			
+			String encodeStr = userSb.toString();
+			if(logger.isDebugEnabled()) {
+				logger.debug("[encodeStr] = " + encodeStr);
+			}
+			
+			response = Util.getResponseForTrue(head, encodeStr);
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("[response] = " + response);
+			}
+		}
+		
+		logger.debug("exit UserServiceImpl.userAutoRegister(String xmlStr, Head head)");
 		return response;
 	}
 
