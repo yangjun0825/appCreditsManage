@@ -385,11 +385,36 @@ public class UserServiceImpl implements UserService {
 			StringBuffer userSb = new StringBuffer();
 			
 			for(Map<String, Object> map : userInfoList) {
-				userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
-				userSb.append("<pendcredits>" + map.get("pendcredit") + "</pendcredits>");
-				userSb.append("<zfbaccout>" + map.get("zfbaccount") + "</zfbaccout>");
-				userSb.append("<telaccout>" + map.get("telaccount") + "</telaccout>");
-				userSb.append("<qqaccout>" + map.get("qqaccount") + "</qqaccout>");
+				if(StringUtils.isNotBlank((String)map.get("totalcredit"))) {
+					userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
+				} else {
+					userSb.append("<credits></credits>");
+				}
+				
+				if(StringUtils.isNotBlank((String)map.get("pendcredit"))) {
+					userSb.append("<pendcredits>" + map.get("pendcredit") + "</pendcredits>");
+				} else {
+					userSb.append("<pendcredits></pendcredits>");
+				}
+				
+				if(StringUtils.isNotBlank((String)map.get("zfbaccount"))) {
+					userSb.append("<zfbaccout>" + map.get("zfbaccount") + "</zfbaccout>");
+				} else {
+					userSb.append("<zfbaccout></zfbaccout>");
+				}
+				
+				if(StringUtils.isNotBlank((String)map.get("telaccount"))) {
+					userSb.append("<telaccout>" + map.get("telaccount") + "</telaccout>");
+				} else {
+					userSb.append("<telaccout></telaccout>");
+				}
+				
+				if(StringUtils.isNotBlank((String)map.get("qqaccount"))) {
+					userSb.append("<qqaccout>" + map.get("qqaccount") + "</qqaccout>");
+				} else {
+					userSb.append("<qqaccout></qqaccout>");
+				}
+				
 			}
 			
 			String encodeStr = userSb.toString();
@@ -437,8 +462,13 @@ public class UserServiceImpl implements UserService {
 		if(i > 0) {
 			StringBuffer userSb = new StringBuffer();
 			userSb.append("<accout>" + accountRandom + "</accout>");
-			userSb.append("<credit>10</credit>");
-			
+			userSb.append("<credits>10</credits>");
+			userSb.append("<jlcredit>10</jlcredit>");
+			userSb.append("<pendcredits></pendcredits>");
+			userSb.append("<zfbaccout></zfbaccout>");
+			userSb.append("<telaccout></telaccout>");
+			userSb.append("<qqaccout></qqaccout>");
+				
 			String encodeStr = userSb.toString();
 			if(logger.isDebugEnabled()) {
 				logger.debug("[encodeStr] = " + encodeStr);

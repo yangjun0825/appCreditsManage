@@ -21,4 +21,14 @@ public class Constant {
 	* @Fields not_complete_withdraw : 没有完成提现
 	*/ 
 	public static final String not_complete_withdraw = "2";
+	
+	/** 
+	* @Fields task_lottery : 抽奖任务
+	*/ 
+	public static final String task_lottery = "1";
+	
+	/** 
+	* @Fields task_share : 分享任务
+	*/ 
+	public static final String task_share = "2";
 }

@@ -39,4 +39,14 @@ public interface CreditsService {
 	*/
 	public String userWithdrawProcess(String xmlStr, Head head) throws Exception;
 	
+	/** 
+	* @Title: userDaliyTaskProcess 
+	* @Description: 用户每日任务
+	* @param  xmlStr
+	* @param  head
+	* @param @throws Exception    设定文件 
+	* @return String    返回类型 
+	* @throws 
+	*/
+	public String userDaliyTaskProcess(String xmlStr, Head head) throws Exception;
 }

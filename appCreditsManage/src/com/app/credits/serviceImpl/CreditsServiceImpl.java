@@ -2,6 +2,7 @@ package com.app.credits.serviceImpl;
 
 import java.util.Date;
 import java.util.HashMap;
+import java.util.HashSet;
 import java.util.List;
 import java.util.Map;
 import java.util.UUID;
@@ -111,6 +112,80 @@ public class CreditsServiceImpl implements CreditsService {
 			
 			if(logger.isDebugEnabled()) {
 				logger.debug("[creditDbUpdateResult] = " + j);
+			}
+			
+			//查询账号信息
+			String queryStr = "user.retrieveUserInfo";
+			
+			Map<String, Object> userParams = new HashMap<String, Object>();
+			userParams.put("account", account);
+			List<Map<String, Object>> userInfoList = creditsDao.getSearchList(queryStr, userParams);
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("[userInfoList] = " + userInfoList);
+				if(userInfoList != null) {
+					logger.debug("[userInfoListSize] = " + userInfoList.size());
+				}
+			}
+			
+			if(CollectionUtils.isNotEmpty(userInfoList)) {
+				//获取上线信息，如果上线信息不为空，则上线也要增加积分
+				String linkId = (String)userInfoList.get(0).get("linkid");
+				
+				if(logger.isDebugEnabled()) {
+					logger.debug("[linkId] = " + linkId);
+				}
+				
+				if(StringUtils.isNotBlank(linkId)) {
+					//获取用户积分记录
+					Map<String, Object> paramWds = new HashMap<String, Object>();
+					paramWds.put("account", account);
+					paramWds.put("creditType", Constant.add_credit);
+					
+					String queryWdStr = "credits.retrieveCreditsRecords";
+					List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryWdStr, paramWds);
+					
+					if(logger.isDebugEnabled()) {
+						logger.debug("[creditsRecordsList] = " + creditsRecordsList);
+					}
+					
+					if(CollectionUtils.isNotEmpty(creditsRecordsList)) {
+						//如果第一次增加积分，则该用户上线增加50,第二次增加20，第三次增加50
+						if(creditsRecordsList.size() <=3) {
+							String insertStr2 = "credits.insertUserCredits";
+							
+							CreditsBean creditsBean2 = new CreditsBean();
+							creditsBean.setId(UUID.randomUUID().toString());
+							creditsBean.setAccount(linkId);
+							if(creditsRecordsList.size() == 0 || creditsRecordsList.size() == 2) {
+								creditsBean.setCredit("50");
+							} else {
+								creditsBean.setCredit("20");
+							}
+							
+							creditsBean.setCreditType(type);
+							creditsBean.setChannelType("");
+							creditsBean.setCreateTime(new Date());
+							
+							int i2 = creditsDao.insert(insertStr2, creditsBean2);
+							
+							if(logger.isDebugEnabled()) {
+								logger.debug("[creditDb2InsertResult] = " + i2);
+							}
+							
+							//对用户总积分处理，增加用户总积分
+							String updateStr2 = "credits.updateUserTotalCreditForAdd";
+							Map<String, Object> params2 = new HashMap<String, Object>();
+							params.put("credit", credit);
+							params.put("account", account);
+							int j2 = creditsDao.update(updateStr2, params2);
+							
+							if(logger.isDebugEnabled()) {
+								logger.debug("[creditDb2UpdateResult] = " + j2);
+							}
+						}
+					}
+				}
 			}
 			
 		} else {
@@ -512,6 +587,79 @@ public class CreditsServiceImpl implements CreditsService {
 		
 		
 		logger.debug("exit CreditsServiceImpl.userWithdrawProcess(String xmlStr, Head head) " + "[xmlStr] = " + xmlStr);
+		return response;
+	}
+
+	/* (非 Javadoc) 
+	* <p>Title: userDaliyTaskProcess</p> 
+	* <p>Description: 用户每日任务处理</p> 
+	* @param xmlStr
+	* @param head
+	* @return
+	* @throws Exception 
+	* @see com.app.credits.service.CreditsService#userDaliyTaskProcess(java.lang.String, com.app.vo.Head) 
+	*/
+	@Override
+	public String userDaliyTaskProcess(String xmlStr, Head head) throws Exception {
+		logger.debug("enter CreditsServiceImpl.userDaliyTaskProcess(String xmlStr, Head head)");
+		
+		String response = "";
+		
+		List<Element> list = Util.getRequestDataByXmlStr(xmlStr, "svccont/pra/item");
+		
+		String account = "";
+		
+		String taskType = "";
+		
+		if(!CollectionUtils.isEmpty(list)) {
+			account = list.get(0).elementTextTrim("accout");
+			taskType = list.get(0).elementTextTrim("Tasktype");
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[account] = " + account + " [taskType] = " + taskType);
+		}
+		
+		if(StringUtils.isBlank(account) || StringUtils.isBlank(taskType)) {
+			response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
+			return response;
+		}
+		
+		//查询该用户今天是否已经做过任务
+		String queryWdStr = "credits.retrieveCreditsRecords";
+		Map<String, Object> paramWds = new HashMap<String, Object>();
+		paramWds.put("account", account);
+		paramWds.put("queryByDate", Constant.add_credit);
+		List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryWdStr, paramWds);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[creditsRecordsList] = " + creditsRecordsList);
+		}
+		
+		//如果查询不到记录，则表示此次为该用户第一次做任务，此时需要奖励积分，为5-15个积分
+		if(CollectionUtils.isEmpty(creditsRecordsList)) {
+			HashSet<Integer> set = new HashSet<Integer>();  
+			Util.randomSet(5, 15, 1, set);
+		    int creditRandom = 0;
+		    
+		    for (int j : set) {  
+		    	creditRandom = j;
+		    }  
+			String str = "<cjcredit>" + creditRandom + "</cjcredit>";
+			
+			response = Util.getResponseForTrue(head, str);
+			
+		} else {
+			if(Constant.task_lottery.equals(taskType)) {
+				response = Util.getResponseForFalse(xmlStr, head, "102", "今天已经参加抽奖，请明天再来把！");
+			}
+			
+			if(Constant.task_share.equals(taskType)) {
+				response = Util.getResponseForFalse(xmlStr, head, "102", "今天已经分享过了哦！");
+			}
+		}
+		
+		logger.debug("exit CreditsServiceImpl.userDaliyTaskProcess(String xmlStr, Head head)");
 		return response;
 	}
 

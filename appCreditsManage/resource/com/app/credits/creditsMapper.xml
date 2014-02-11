@@ -30,6 +30,9 @@
 		                  from credit e
 		                 where e.account = #{account}
 		                   and e.credittype = #{creditType}
+		                 <if test="queryByDate != null">
+		                   and date(e.createtime) = date(now()) 
+		                 </if>
 	</select>
 	
 
