@@ -22,4 +22,12 @@ public interface UserService {
 	*/
 	public List<UserBean> retrieveUserInfoList(Map<String, Object> params);
 	
+	/** 
+	* @Title: freezeUser 
+	* @Description: 冻结账户
+	* @return String    返回类型 
+	* @throws 
+	*/
+	public String freezeUser(Map<String, Object> params);
+	
 }

@@ -41,6 +41,11 @@ public class CreditsBean {
 	private String isComplete;
 	
 	/** 
+	* @Fields macAddress : mac硬件地址
+	*/ 
+	private String macAddress;
+	
+	/** 
 	* @Fields createTime : 创建时间
 	*/ 
 	private Date createTime;
@@ -100,6 +105,14 @@ public class CreditsBean {
 
 	public void setIsComplete(String isComplete) {
 		this.isComplete = isComplete;
+	}
+
+	public String getMacAddress() {
+		return macAddress;
+	}
+
+	public void setMacAddress(String macAddress) {
+		this.macAddress = macAddress;
 	}
 	
 }

@@ -18,6 +18,7 @@ import org.springframework.stereotype.Service;
 import com.app.user.bean.UserBean;
 import com.app.user.bean.UserFeedBackBean;
 import com.app.user.service.UserService;
+import com.app.util.Constant;
 import com.app.util.MyBatisDao;
 import com.app.util.Util;
 import com.app.vo.Head;
@@ -157,6 +158,17 @@ public class UserServiceImpl implements UserService {
 			return response;
 		}
 		
+		String state = (String)userInfoList.get(0).get("state");
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[userState] = " + state);
+		}
+		
+		if(Constant.state_invalid.equals(state)) {
+			response = Util.getResponseForFalse(xmlStr, head, "104", "帐号异常，请联系管理员！（可能因为黑名单）");
+			return response;
+		}
+		
 		StringBuffer userSb = new StringBuffer();
 		
 		for(Map<String, Object> map : userInfoList) {
@@ -165,6 +177,7 @@ public class UserServiceImpl implements UserService {
 			userSb.append("<zfbaccout>" + map.get("zfbaccount") + "</zfbaccout>");
 			userSb.append("<telaccout>" + map.get("telaccount") + "</telaccout>");
 			userSb.append("<qqaccout>" + map.get("qqaccount") + "</qqaccout>");
+			userSb.append("<state>" + map.get("state") + "</state>");
 		}
 		
 		String encodeStr = userSb.toString();
@@ -354,7 +367,7 @@ public class UserServiceImpl implements UserService {
 		
 		if(CollectionUtils.isNotEmpty(list)) {
 			imei = list.get(0).elementTextTrim("imei");
-			linkId = list.get(0).elementTextTrim("linkid");
+			linkId = list.get(0).elementTextTrim("linkId");
 		}
 		
 		if(logger.isDebugEnabled()) {
@@ -382,14 +395,35 @@ public class UserServiceImpl implements UserService {
 		
 		//如果查询到数据，说明该手机已经注册过
 		if(CollectionUtils.isNotEmpty(userInfoList)) {
+			
+			String state = (String)userInfoList.get(0).get("state");
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("[userState] = " + state);
+			}
+			
+			if(Constant.state_invalid.equals(state)) {
+				response = Util.getResponseForFalse(xmlStr, head, "104", "帐号异常，请联系管理员！（可能因为黑名单）");
+				return response;
+			}
+			
 			StringBuffer userSb = new StringBuffer();
 			
 			for(Map<String, Object> map : userInfoList) {
+				
+				if(StringUtils.isNotBlank((String)map.get("account"))) {
+					userSb.append("<accout>" + map.get("account") + "</accout>");
+				} else {
+					userSb.append("<accout></accout>");
+				}
+				
 				if(StringUtils.isNotBlank((String)map.get("totalcredit"))) {
 					userSb.append("<credits>" + map.get("totalcredit") + "</credits>");
 				} else {
 					userSb.append("<credits></credits>");
 				}
+				
+				userSb.append("<jlcredit></jlcredit>");
 				
 				if(StringUtils.isNotBlank((String)map.get("pendcredit"))) {
 					userSb.append("<pendcredits>" + map.get("pendcredit") + "</pendcredits>");
@@ -413,6 +447,12 @@ public class UserServiceImpl implements UserService {
 					userSb.append("<qqaccout>" + map.get("qqaccount") + "</qqaccout>");
 				} else {
 					userSb.append("<qqaccout></qqaccout>");
+				}
+				
+				if(StringUtils.isNotBlank((String)map.get("state"))) {
+					userSb.append("<state>" + map.get("state") + "</state>");
+				} else {
+					userSb.append("<state>1</state>");
 				}
 				
 			}
@@ -468,6 +508,7 @@ public class UserServiceImpl implements UserService {
 			userSb.append("<zfbaccout></zfbaccout>");
 			userSb.append("<telaccout></telaccout>");
 			userSb.append("<qqaccout></qqaccout>");
+			userSb.append("<state>1</state>");
 				
 			String encodeStr = userSb.toString();
 			if(logger.isDebugEnabled()) {

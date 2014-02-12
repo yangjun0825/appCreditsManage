@@ -25,5 +25,31 @@ public interface CreditService {
 	* @throws 
 	*/
 	public String completeWithDraw(Map<String, Object> params);
+
+	/** 
+	* @Title: retrieveCreditByMacList 
+	* @Description: 获取mac地址积分
+	* @param params
+	* @return List<CreditsBean>    返回类型 
+	* @throws 
+	*/
+	public List<CreditsBean> retrieveCreditByMacList(Map<String, Object> params);
 	
+	/** 
+	* @Title: retrieveCreditRecordListByCondition 
+	* @Description: 根据条件获取用户积分记录 
+	* @param  params
+	* @return List<CreditsBean>    返回类型 
+	* @throws 
+	*/
+	public List<CreditsBean> retrieveCreditRecordListByCondition(Map<String, Object> params);
+	
+	/** 
+	* @Title: retrieveUserCreditCount 
+	* @Description: 获取用户当天增加的积分总数之和
+	* @param  params
+	* @return List<CreditsBean>    返回类型 
+	* @throws 
+	*/
+	public List<CreditsBean> retrieveUserCreditCount(Map<String, Object> params);
 }

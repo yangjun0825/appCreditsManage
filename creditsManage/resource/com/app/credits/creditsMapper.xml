@@ -15,6 +15,8 @@
 		<result property="credittype" column="creditType" />
 		<result property="channeltype" column="channelType" />
 		<result property="iscomplete" column="isComplete" />
+		<result property="macaddress" column="macAddress" />
+		<result property="creditcount" column="creditCount" />
 		<result property="createtime" column="createTime" />
 	</resultMap>
 
@@ -26,6 +28,7 @@
 		                       e.credittype   as creditType,
 		                       e.channeltype  as channelType,
 		                       e.iscomplete   as isComplete,
+		                       e.macaddress   as macAddress,
 		                       e.createtime   as createTime
 		                  from credit e
 		                 where e.account = #{account}
@@ -80,5 +83,30 @@
    		   set c.iscomplete = #{isComplete}
    		 where c.credittype = #{creditType} and c.account = #{account}
 	</update>
+    
+    <!-- 查询mac地址相同的账户当天的所有积分 -->
+    <select id="retrieveMacAddCreditList" parameterType="map" resultMap="creditsMap">
+		   select e.macaddress   as macAddress,
+                  sum(e.credit)  as creditCount
+             from credit e
+            where e.credittype = #{creditType}
+              and date(e.createtime) = date(now())
+              and e.macaddress is not null 
+              and e.macaddress != '0000'
+         group by e.macaddress
+         order by creditCount desc
+    </select>
+    
+    <!-- 获取用户当天的所有增加积分总数 -->
+    <select id="retrieveUserAddCreditCount" parameterType="map" resultMap="creditsMap">
+    		select account      as account,
+    		      sum(credit)   as creditCount
+    		  from credit 
+    		 where date(createtime) = date(now())
+    		   and channeltype = '1'
+    		   and credittype = #{creditType}
+    		 group by account
+    		 order by creditCount desc
+    </select>
     
 </mapper>

@@ -56,6 +56,11 @@ public class UserBean {
 	private String imei;
 	
 	/** 
+	* @Fields state : 用户状态 
+	*/ 
+	private String state;
+	
+	/** 
 	* @Fields createTime : 创建时间
 	*/ 
 	private Date createTime;
@@ -138,6 +143,14 @@ public class UserBean {
 
 	public void setImei(String imei) {
 		this.imei = imei;
+	}
+
+	public String getState() {
+		return state;
+	}
+
+	public void setState(String state) {
+		this.state = state;
 	}
 	
 	

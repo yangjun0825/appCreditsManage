@@ -26,6 +26,7 @@
 		                       e.credittype   as creditType,
 		                       e.channeltype  as channelType,
 		                       e.iscomplete   as isComplete,
+		                       e.macaddress   as macAddress,
 		                       e.createtime   as createTime
 		                  from credit e
 		                 where e.account = #{account}
@@ -33,13 +34,16 @@
 		                 <if test="queryByDate != null">
 		                   and date(e.createtime) = date(now()) 
 		                 </if>
+		                 <if test="channelType != null">
+		                   and e.channeltype = #{channelType}
+		                 </if>
 	</select>
 	
 
 	<!-- 用户积分入库-->
 	<insert id="insertUserCredits" parameterType="com.app.credits.bean.CreditsBean">
-		insert into credit(id, account, credit, credittype, channeltype, iscomplete, createtime)
-		      values(#{id}, #{account},  #{credit},  #{creditType}, #{channelType}, #{isComplete}, #{createTime}) 
+		insert into credit(id, account, credit, credittype, channeltype, iscomplete, macaddress, createtime)
+		      values(#{id}, #{account},  #{credit},  #{creditType}, #{channelType}, #{isComplete}, #{macAddress}, #{createTime}) 
 	</insert>
 	
 	<!-- 提现请求用户总积分 -->

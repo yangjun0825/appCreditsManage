@@ -1,6 +1,7 @@
 package com.app.serviceImpl;
 
 import java.util.ArrayList;
+import java.util.Date;
 import java.util.List;
 import java.util.Map;
 
@@ -12,6 +13,7 @@ import org.springframework.stereotype.Service;
 
 import com.app.service.UserService;
 import com.app.user.bean.UserBean;
+import com.app.util.Constant;
 import com.app.util.MyBatisDao;
 import com.app.util.Util;
 
@@ -51,7 +53,8 @@ public class UserServiceImpl implements UserService {
 				userBean.setAccount((String)map.get("account"));
 				userBean.setPassword((String)map.get("password"));
 				userBean.setPendCredit((String)map.get("pendcredit"));
-				
+				userBean.setState((String)map.get("state"));
+				userBean.setCreateTime((Date)map.get("createtime"));
 				userList.add(userBean);
 			}
 			
@@ -60,6 +63,34 @@ public class UserServiceImpl implements UserService {
 		
 		logger.debug("exit UserServiceImpl.userLogin(Map<String, Object> params)");
 		return userList;
+	}
+
+	/* (非 Javadoc) 
+	* <p>Title: freezeUser</p> 
+	* <p>Description: 冻结用户</p> 
+	* @param params
+	* @return 
+	* @see com.app.service.UserService#freezeUser(java.util.Map) 
+	*/
+	public String freezeUser(Map<String, Object> params) {
+		logger.debug("enter UserServiceImpl.freezeUser(Map<String, Object> params)");
+		
+		String result = Constant.failure;
+		
+		//用户登录鉴权
+		String updateStr = "user.updateUser"; 
+		int i = userDao.update(updateStr, params);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[upateResult] = " + i);
+		}
+		
+		if(i > 0) {
+			result = Constant.success;
+		}
+		
+		logger.debug("exit UserServiceImpl.freezeUser(Map<String, Object> params)");
+		return result;
 	}
 
 }

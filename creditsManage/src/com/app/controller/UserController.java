@@ -8,7 +8,6 @@ import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
 import org.apache.commons.collections4.CollectionUtils;
-import org.apache.commons.lang3.StringUtils;
 import org.apache.commons.logging.Log;
 import org.apache.commons.logging.LogFactory;
 import org.springframework.beans.factory.annotation.Autowired;
@@ -64,6 +63,52 @@ public class UserController {
 		}
 		
 		logger.debug("exit UserController.userLogin(HttpServletRequest request, HttpServletResponse response)");
+	}
+	
+	/** 
+	* @Title: indexPage 
+	* @Description: 跳转登录首页 
+	* @return ModelAndView    返回类型 
+	* @throws 
+	*/
+	@RequestMapping("indexPage.do")
+	public ModelAndView indexPage() {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("/view/indexPage");
+		return mav;
+	}
+	
+	/** 
+	* @Title: freezeUser 
+	* @Description: 冻结用户 
+	* @param  request
+	* @param  response    
+	* @return void    返回类型 
+	* @throws 
+	*/
+	@RequestMapping("freezeUser.do")
+	public void freezeUser(HttpServletRequest request, HttpServletResponse response) {
+		
+		logger.debug("enter UserController.freezeUser(HttpServletRequest request, HttpServletResponse response)");
+		
+		String account = request.getParameter("account");
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[account] = " + account);
+		}
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("account", account);
+		
+		String result = userService.freezeUser(params);
+		
+		if(Constant.success.equals(result)) {
+			SpringUtils.renderText(response, Constant.success);
+		} else {
+			SpringUtils.renderText(response, Constant.failure);
+		}
+		
+		logger.debug("exit UserController.freezeUser(HttpServletRequest request, HttpServletResponse response)");
 	}
 	
 }

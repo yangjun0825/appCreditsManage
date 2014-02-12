@@ -56,6 +56,8 @@ public class CreditsServiceImpl implements CreditsService {
 		String credit = "";
 		String cashType = "";
 		String cashAccount = "";
+		String macAddress = "";
+		String channelType = "";
 		
 		if(CollectionUtils.isNotEmpty(list)) {
 			account = list.get(0).elementTextTrim("accout");
@@ -63,11 +65,14 @@ public class CreditsServiceImpl implements CreditsService {
 			credit = list.get(0).elementTextTrim("credit");
 			cashType = list.get(0).elementTextTrim("cashtype");
 			cashAccount = list.get(0).elementTextTrim("cashaccout");
+			macAddress = list.get(0).elementTextTrim("macaddress");
+			channelType = list.get(0).elementTextTrim("creditType");
 		}
 		
 		if(logger.isDebugEnabled()) {
 			logger.debug("[account] = " + account + " [type] = " + type + " [credit] = " + credit 
-					  + " [cashType] = " + cashType + " [cashAccount] = " + cashAccount);
+					  + " [cashType] = " + cashType + " [cashAccount] = " + cashAccount
+					  + " [macAddress] = " + macAddress + " [channelType] = " + channelType);
 		}
 		
 		if (StringUtils.isBlank(account) || StringUtils.isBlank(type)
@@ -94,7 +99,8 @@ public class CreditsServiceImpl implements CreditsService {
 			creditsBean.setAccount(account);
 			creditsBean.setCredit(credit);
 			creditsBean.setCreditType(type);
-			creditsBean.setChannelType("");
+			creditsBean.setChannelType(channelType);
+			creditsBean.setMacAddress(macAddress);
 			creditsBean.setCreateTime(new Date());
 			
 			int i = creditsDao.insert(insertStr, creditsBean);
@@ -114,74 +120,104 @@ public class CreditsServiceImpl implements CreditsService {
 				logger.debug("[creditDbUpdateResult] = " + j);
 			}
 			
-			//查询账号信息
-			String queryStr = "user.retrieveUserInfo";
+			//如果用户增加积分大于150，则表示该用户在刷积分，将用户状态更改为无效
+//			if(Integer.parseInt(credit) > 150) {
+//				
+//				String update2Str = "user.updateUserInfo";
+//				
+//				Map<String, Object> params2 = new HashMap<String, Object>();
+//				params2.put("account", account);
+//				params2.put("state", Constant.state_invalid);
+//				params2.put("createTime", new Date());
+//				
+//				int i2 = creditsDao.update(update2Str, params2);
+//				
+//				if(logger.isDebugEnabled()) {
+//					logger.debug("[UserInfoDb2UpdateResult] = " + i2);
+//				}
+//				
+//				response = Util.getResponseForFalse(xmlStr, head, "104", "帐号异常，请联系管理员！（可能因为黑名单）");
+//				return response;
+//			}
 			
-			Map<String, Object> userParams = new HashMap<String, Object>();
-			userParams.put("account", account);
-			List<Map<String, Object>> userInfoList = creditsDao.getSearchList(queryStr, userParams);
-			
-			if(logger.isDebugEnabled()) {
-				logger.debug("[userInfoList] = " + userInfoList);
-				if(userInfoList != null) {
-					logger.debug("[userInfoListSize] = " + userInfoList.size());
-				}
-			}
-			
-			if(CollectionUtils.isNotEmpty(userInfoList)) {
-				//获取上线信息，如果上线信息不为空，则上线也要增加积分
-				String linkId = (String)userInfoList.get(0).get("linkid");
+			if(Constant.channelType_load.equals(channelType)) {
+				//查询账号信息
+				String queryStr = "user.retrieveUserInfo";
+				
+				Map<String, Object> userParams = new HashMap<String, Object>();
+				userParams.put("account", account);
+				List<Map<String, Object>> userInfoList = creditsDao.getSearchList(queryStr, userParams);
 				
 				if(logger.isDebugEnabled()) {
-					logger.debug("[linkId] = " + linkId);
+					logger.debug("[userInfoList] = " + userInfoList);
+					if(userInfoList != null) {
+						logger.debug("[userInfoListSize] = " + userInfoList.size());
+					}
 				}
 				
-				if(StringUtils.isNotBlank(linkId)) {
-					//获取用户积分记录
-					Map<String, Object> paramWds = new HashMap<String, Object>();
-					paramWds.put("account", account);
-					paramWds.put("creditType", Constant.add_credit);
-					
-					String queryWdStr = "credits.retrieveCreditsRecords";
-					List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryWdStr, paramWds);
+				if(CollectionUtils.isNotEmpty(userInfoList)) {
+					//获取上线信息，如果上线信息不为空，则上线也要增加积分
+					String linkId = (String)userInfoList.get(0).get("linkid");
 					
 					if(logger.isDebugEnabled()) {
-						logger.debug("[creditsRecordsList] = " + creditsRecordsList);
+						logger.debug("[linkId] = " + linkId);
 					}
 					
-					if(CollectionUtils.isNotEmpty(creditsRecordsList)) {
-						//如果第一次增加积分，则该用户上线增加50,第二次增加20，第三次增加50
-						if(creditsRecordsList.size() <=3) {
-							String insertStr2 = "credits.insertUserCredits";
-							
-							CreditsBean creditsBean2 = new CreditsBean();
-							creditsBean.setId(UUID.randomUUID().toString());
-							creditsBean.setAccount(linkId);
-							if(creditsRecordsList.size() == 0 || creditsRecordsList.size() == 2) {
-								creditsBean.setCredit("50");
-							} else {
-								creditsBean.setCredit("20");
-							}
-							
-							creditsBean.setCreditType(type);
-							creditsBean.setChannelType("");
-							creditsBean.setCreateTime(new Date());
-							
-							int i2 = creditsDao.insert(insertStr2, creditsBean2);
-							
-							if(logger.isDebugEnabled()) {
-								logger.debug("[creditDb2InsertResult] = " + i2);
-							}
-							
-							//对用户总积分处理，增加用户总积分
-							String updateStr2 = "credits.updateUserTotalCreditForAdd";
-							Map<String, Object> params2 = new HashMap<String, Object>();
-							params.put("credit", credit);
-							params.put("account", account);
-							int j2 = creditsDao.update(updateStr2, params2);
-							
-							if(logger.isDebugEnabled()) {
-								logger.debug("[creditDb2UpdateResult] = " + j2);
+					if(StringUtils.isNotBlank(linkId) && !"10000".equals(linkId.trim())) {
+						//获取用户积分记录
+						Map<String, Object> paramWds = new HashMap<String, Object>();
+						paramWds.put("account", account);
+						paramWds.put("creditType", Constant.add_credit);
+						paramWds.put("channelType", channelType);
+						
+						String queryWdStr = "credits.retrieveCreditsRecords";
+						List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryWdStr, paramWds);
+						
+						if(logger.isDebugEnabled()) {
+							logger.debug("[creditsRecordsList] = " + creditsRecordsList);
+						}
+						
+						if(CollectionUtils.isNotEmpty(creditsRecordsList)) {
+							//如果第一次增加积分，则该用户上线增加50,第二次增加20，第三次增加50
+							if(creditsRecordsList.size() <=3) {
+								String insertStr2 = "credits.insertUserCredits";
+								
+								CreditsBean creditsBean2 = new CreditsBean();
+								creditsBean2.setId(UUID.randomUUID().toString());
+								creditsBean2.setAccount(linkId);
+								
+								if(creditsRecordsList.size() == 1 || creditsRecordsList.size() == 3) {
+									creditsBean2.setCredit("50");
+								} else {
+									creditsBean2.setCredit("20");
+								}
+								
+								creditsBean2.setCreditType(type);
+								creditsBean2.setChannelType(Constant.channelType_invite);
+								creditsBean2.setCreateTime(new Date());
+								
+								int i2 = creditsDao.insert(insertStr2, creditsBean2);
+								
+								if(logger.isDebugEnabled()) {
+									logger.debug("[creditDb2InsertResult] = " + i2);
+								}
+								
+								//对用户总积分处理，增加用户总积分
+								String updateStr2 = "credits.updateUserTotalCreditForAdd";
+								Map<String, Object> params2 = new HashMap<String, Object>();
+								
+								if(creditsRecordsList.size() == 1 || creditsRecordsList.size() == 3) {
+									params2.put("credit", "50");
+								} else {
+									params2.put("credit", "20");
+								}
+								
+								params2.put("account", linkId);
+								int j2 = creditsDao.update(updateStr2, params2);
+								
+								if(logger.isDebugEnabled()) {
+									logger.debug("[creditDb2UpdateResult] = " + j2);
+								}
 							}
 						}
 					}
@@ -629,6 +665,7 @@ public class CreditsServiceImpl implements CreditsService {
 		String queryWdStr = "credits.retrieveCreditsRecords";
 		Map<String, Object> paramWds = new HashMap<String, Object>();
 		paramWds.put("account", account);
+		paramWds.put("creditType", Constant.add_credit);
 		paramWds.put("queryByDate", Constant.add_credit);
 		List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryWdStr, paramWds);
 		
@@ -639,13 +676,49 @@ public class CreditsServiceImpl implements CreditsService {
 		//如果查询不到记录，则表示此次为该用户第一次做任务，此时需要奖励积分，为5-15个积分
 		if(CollectionUtils.isEmpty(creditsRecordsList)) {
 			HashSet<Integer> set = new HashSet<Integer>();  
-			Util.randomSet(5, 15, 1, set);
+			Util.randomSet(5, 10, 1, set);
 		    int creditRandom = 0;
 		    
 		    for (int j : set) {  
 		    	creditRandom = j;
 		    }  
-			String str = "<cjcredit>" + creditRandom + "</cjcredit>";
+		    
+		    //积分入库积分记录表
+			String insertStr = "credits.insertUserCredits";
+			
+			CreditsBean creditsBean = new CreditsBean();
+			creditsBean.setId(UUID.randomUUID().toString());
+			creditsBean.setAccount(account);
+			creditsBean.setCredit(creditRandom + "");
+			creditsBean.setCreditType(Constant.add_credit);
+			creditsBean.setChannelType("");
+			creditsBean.setCreateTime(new Date());
+			
+			int i = creditsDao.insert(insertStr, creditsBean);
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("[creditDb2InsertResult] = " + i);
+			}
+			
+			//对用户总积分处理，增加用户总积分
+			String updateStr = "credits.updateUserTotalCreditForAdd";
+			Map<String, Object> params = new HashMap<String, Object>();
+			params.put("credit", creditRandom);
+			params.put("account", account);
+			int j = creditsDao.update(updateStr, params);
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("[creditDb2UpdateResult] = " + j);
+			}
+		    
+			//获取用户信息
+			String queryStr = "user.retrieveUserInfo";
+			
+			Map<String, Object> userParams = new HashMap<String, Object>();
+			userParams.put("account", account);
+			List<Map<String, Object>> userInfoList = creditsDao.getSearchList(queryStr, userParams);
+			
+			String str = "<cjcredit>" + creditRandom + "</cjcredit><credit>"+ userInfoList.get(0).get("totalcredit") +"</credit>";
 			
 			response = Util.getResponseForTrue(head, str);
 			

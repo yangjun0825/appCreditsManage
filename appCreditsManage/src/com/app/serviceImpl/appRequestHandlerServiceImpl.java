@@ -129,6 +129,9 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 								case tjt008:
 									result = userService.userAutoRegister(rqXmlstr, head);
 									break;
+								case tjt009:
+									result = creditsService.userDaliyTaskProcess(rqXmlstr, head);
+									break;
 								default:
 									flag = true;
 									break;

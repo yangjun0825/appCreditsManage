@@ -14,6 +14,7 @@
 		<result property="totalcredit" column="totalCredit"/>
 		<result property="pendcredit" column="pendCredit"/>
 		<result property="zfbaccount" column="zfbAccount"/>
+		<result property="state" column="state"/>
 		<result property="createtime" column="createTime" />
 	</resultMap>
 
@@ -24,6 +25,7 @@
 		                       e.totalcredit   as totalCredit,
 		                       e.pendcredit    as pendCredit,
 		                       e.zfbaccount    as zfbAccount,
+		                       e.state         as state,
 		                       e.createtime    as createTime
 		                  from user e
 		                 where 1=1
@@ -32,6 +34,9 @@
 		                 </if>
 		                 <if test="password != null">
 						    and e.password = #{password}
+						 </if>
+						 <if test="macAddress != null">
+						 	and e.account in (select account from credit where macAddress = #{macAddress})
 						 </if>
 						 order by pendcredit desc
 	</select>
@@ -42,5 +47,12 @@
 		insert into user(account, password, createtime)
 		      values(#{account},  #{password}, #{createTime}) 
 	</insert>
+	
+	<!-- 将用户状态设为无效 -->
+	<update id="updateUser" parameterType="map">
+		update user
+		   set state='2'
+		where  account = #{account}
+	</update>
 	
 </mapper>

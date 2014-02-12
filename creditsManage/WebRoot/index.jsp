@@ -62,7 +62,8 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		
 		function onSuccess(data,status){ 
 			if(data=="0") {
-				window.location.href = bastPath + "credit/showCreditWdList.do";			
+				//window.location.href = bastPath + "credit/showCreditWdList.do";		
+				window.location.href = bastPath + "user/indexPage.do";	
 			} else {
 				$("#promptInfo").html("用户名或密码不正确");
 				$("#openDialog").click();
