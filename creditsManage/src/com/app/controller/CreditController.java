@@ -43,7 +43,7 @@ public class CreditController {
 	* @return ModelAndView    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("showCreditWdList.do")
+	@RequestMapping("showCreditWdList.apk")
 	public ModelAndView showCreditWithDrawList() {
 		
 		logger.debug("enter CreditController.showCreditWithDrawList()");
@@ -70,7 +70,7 @@ public class CreditController {
 	* @return ModelAndView    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("showCreditWdDetailList.do")
+	@RequestMapping("showCreditWdDetailList.apk")
 	public ModelAndView retrieveCreditWithDrawDetailList(HttpServletRequest request) {
 		
 		logger.debug("enter CreditController.retrieveCreditWithDrawDetailList()");
@@ -116,7 +116,7 @@ public class CreditController {
 	* @return void    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("withDraw.do")
+	@RequestMapping("withDraw.apk")
 	public void completeWithDraw(HttpServletRequest request, HttpServletResponse response) {
 		logger.debug("enter CreditController.completeWithDraw(HttpServletRequest request, HttpServletResponse response)");
 		
@@ -151,7 +151,7 @@ public class CreditController {
 	* @return ModelAndView    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("macCredit")
+	@RequestMapping("macCredit.apk")
 	public ModelAndView retrieveUserCreditRecordByMac() {
 		
 		logger.debug("enter CreditController.retrieveUserCreditRecordByMac()");
@@ -177,7 +177,7 @@ public class CreditController {
 	* @return ModelAndView    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("userInfo")
+	@RequestMapping("userInfo.apk")
 	public ModelAndView retrieveUserInfoListByCondtion(HttpServletRequest request) {
 		logger.debug("enter CreditController.retrieveUserCreditListByCondtion(HttpServletRequest requestty)");
 		
@@ -205,7 +205,7 @@ public class CreditController {
 	* @return ModelAndView    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("accCreditCount.do")
+	@RequestMapping("accCreditCount.apk")
 	public ModelAndView retrieveUserCreditCount() {
 		
 		logger.debug("enter CreditController.retrieveUserCreditCount()");
@@ -232,7 +232,7 @@ public class CreditController {
 	* @return ModelAndView    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("showAccAddCreditList.do")
+	@RequestMapping("showAccAddCreditList.apk")
 	public ModelAndView showAccAddCreditList(HttpServletRequest request) {
 		
 		logger.debug("enter CreditController.showAccAddCreditList()");

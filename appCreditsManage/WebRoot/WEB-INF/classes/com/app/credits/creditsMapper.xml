@@ -73,4 +73,15 @@
    		   set c.zfbaccount = #{zfbAccount}
    		 where c.account = #{account}
     </update>	
+    
+    <!-- 用户推广后获取的总奖励积分 -->
+    <select id="retrieveUserRelatedCreditCount" parameterType="map" resultMap="creditsMap">
+    	select sum(credit) as credit
+          from credit e
+         where e.account = #{account}
+           and e.credittype = #{creditType}
+         <if test="channelType != null">
+           and e.channeltype = #{channelType}
+         </if>
+    </select>
 </mapper>

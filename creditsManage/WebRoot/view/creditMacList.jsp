@@ -44,10 +44,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		   					<li>
 		   						<c:choose>
 		   							<c:when test="${mac.credit > 50.0}">
-		   								<a href="<%=basePath%>credit/userInfo.do?macAddress=${mac.macAddress}" ><p style="color:red;">mac:${mac.macAddress}, 总积分:${mac.credit}</p> </a>
+		   								<a href="<%=basePath%>credit/userInfo.apk?macAddress=${mac.macAddress}" ><p style="color:red;">mac:${mac.macAddress}, 总积分:${mac.credit}</p> </a>
 		   							</c:when>
 		   							<c:otherwise>
-		   								<a href="<%=basePath%>credit/userInfo.do?macAddress=${mac.macAddress}" >mac:${mac.macAddress}, 总积分:${mac.credit} </a>
+		   								<a href="<%=basePath%>credit/userInfo.apk?macAddress=${mac.macAddress}" >mac:${mac.macAddress}, 总积分:${mac.credit} </a>
 		   							</c:otherwise>
 		   						</c:choose>
 		   						

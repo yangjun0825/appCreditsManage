@@ -42,7 +42,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			if (r==true){
 			  	$.ajax({ 
 			            type : "POST", 
-			            url  : "<%=basePath%>credit/withDraw.do",  
+			            url  : "<%=basePath%>credit/withDraw.apk",  
 			            cache : false, 
 			            data : {
 			            	'account':account
@@ -78,7 +78,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    			<ul data-role="listview">
 	    				<c:forEach items="${userList}" var="user">
 		   					<li>
-		   						<a href="<%=basePath%>credit/showCreditWdDetailList.do?account=${user.account}" >用户:${user.account}, 总积分:${user.totalCredit} ,待提现积分：${user.pendCredit}</a>
+		   						<a href="<%=basePath%>credit/showCreditWdDetailList.apk?account=${user.account}" >用户:${user.account}, 总积分:${user.totalCredit} ,待提现积分：${user.pendCredit}</a>
 		   					</li>
 	   					</c:forEach>
 	   				</ul>

@@ -49,4 +49,15 @@ public interface CreditsService {
 	* @throws 
 	*/
 	public String userDaliyTaskProcess(String xmlStr, Head head) throws Exception;
+	
+	/** 
+	* @Title: userPromoteProcess 
+	* @Description: 软件推广处理
+	* @param  xmlStr
+	* @param  head
+	* @param @throws Exception    设定文件 
+	* @return String    返回类型 
+	* @throws 
+	*/
+	public String userPromoteProcess(String xmlStr, Head head) throws Exception;
 }

@@ -56,6 +56,11 @@ public class UserBean {
 	private String imei;
 	
 	/** 
+	* @Fields imsi : 手机imsi
+	*/ 
+	private String imsi;
+	
+	/** 
 	* @Fields state : 用户状态 
 	*/ 
 	private String state;
@@ -151,6 +156,14 @@ public class UserBean {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public String getImsi() {
+		return imsi;
+	}
+
+	public void setImsi(String imsi) {
+		this.imsi = imsi;
 	}
 	
 	

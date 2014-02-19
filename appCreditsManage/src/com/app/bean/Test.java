@@ -1,5 +1,6 @@
 package com.app.bean;
 
+import java.io.File;
 import java.net.MalformedURLException;
 import java.rmi.RemoteException;
 import java.util.HashSet;
@@ -75,19 +76,27 @@ public class Test {
         
        // Object[] objects=client.invoke(name,xmlStr);   
         //System.out.println("返回结果: " + objects[0].toString());  
-        String str = "1.0.2";
-        String a = str.replace(".", "");
-        System.out.println("a: " + a);
-        
-        int i = 11111111;
-        
-        HashSet<Integer> set = new HashSet<Integer>();  
-	    Util.randomSet(10000000,99999999,1,set);
+//        String str = "1.0.2";
+//        String a = str.replace(".", "");
+//        System.out.println("a: " + a);
+//        
+//        int i = 11111111;
+//        
+//        HashSet<Integer> set = new HashSet<Integer>();  
+//	    Util.randomSet(10000000,99999999,1,set);
+//	    
+//	    int accountRandom = 0;
+//	    
+//	    for (int j : set) {  
+//	    	System.out.println("a: " + j);
+//	    }  
 	    
-	    int accountRandom = 0;
 	    
-	    for (int j : set) {  
-	    	System.out.println("a: " + j);
-	    }  
+//	    File file1=new File("D:/apk/UserSmsServiceImpl.class");  
+//	    File file2=new File("D:/apk/b.txt");  
+//	    boolean flag = file1.renameTo(file2);
+	    System.out.println("flag: " + 0/2);
+	    
+	    
     }  
 }

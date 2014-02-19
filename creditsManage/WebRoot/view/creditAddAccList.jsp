@@ -45,10 +45,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		   						
 		   						<c:choose>
 		   							<c:when test="${acc.credit > 30.0}">
-		   								<a href="<%=basePath%>credit/showAccAddCreditList.do?account=${acc.account}" ><p style="color:red;">用户:${acc.account}, 积分:${acc.credit}</p></a>
+		   								<a href="<%=basePath%>credit/showAccAddCreditList.apk?account=${acc.account}" ><p style="color:red;">用户:${acc.account}, 积分:${acc.credit}</p></a>
 		   							</c:when>
 		   							<c:otherwise>
-		   								<a href="<%=basePath%>credit/showAccAddCreditList.do?account=${acc.account}">用户:${acc.account}, 积分:${acc.credit} </a>
+		   								<a href="<%=basePath%>credit/showAccAddCreditList.apk?account=${acc.account}">用户:${acc.account}, 积分:${acc.credit} </a>
 		   							</c:otherwise>
 		   						</c:choose>
 		   					</li>

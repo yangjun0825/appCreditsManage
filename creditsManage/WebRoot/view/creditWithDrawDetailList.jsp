@@ -42,7 +42,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			if (r==true){
 			  	$.ajax({ 
 			            type : "POST", 
-			            url  : "<%=basePath%>credit/withDraw.do",  
+			            url  : "<%=basePath%>credit/withDraw.apk",  
 			            cache : false, 
 			            data : {
 			            	'account':account,

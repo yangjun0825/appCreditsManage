@@ -37,7 +37,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			if (r==true){
 			  	$.ajax({ 
 			            type : "POST", 
-			            url  : "<%=basePath%>user/freezeUser.do",  
+			            url  : "<%=basePath%>user/freezeUser.apk",  
 			            cache : false, 
 			            data : {
 			            	'account':account

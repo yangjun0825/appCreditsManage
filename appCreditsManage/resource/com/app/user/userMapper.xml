@@ -18,6 +18,7 @@
 		<result property="qqaccount" column="qqAccount"/>
 		<result property="linkid" column="linkId"/>
 		<result property="imei" column="imei"/>
+		<result property="imsi" column="imsi"/>
 		<result property="state" column="state"/>
 		<result property="createtime" column="createTime" />
 	</resultMap>
@@ -33,6 +34,7 @@
 		                       e.qqaccount     as qqAccount,
 		                       e.linkid        as linkId,
 		                       e.imei          as imei,
+		                       e.imsi          as imsi,
 		                       e.state		   as state,
 		                       e.createtime    as createTime
 		                  from user e
@@ -46,13 +48,16 @@
 		                 <if test="password != null">
 						   and e.password = #{password}
 						 </if>
+						 <if test="linkId != null">
+						   and linkid = #{linkId}
+						 </if>
 	</select>
 	
 
 	<!-- 插入一个新用户 -->
 	<insert id="insertUser" parameterType="com.app.user.bean.UserBean">
-		insert into user(account, password, totalcredit, linkid, imei, createtime)
-		      values(#{account},  #{password}, #{totalCredit},#{linkId}, #{imei},#{createTime}) 
+		insert into user(account, password, totalcredit, linkid, imei, imsi, createtime)
+		      values(#{account},  #{password}, #{totalCredit},#{linkId}, #{imei}, #{imsi},#{createTime}) 
 	</insert>
 	
 	<!-- 修改用户信息 -->
@@ -76,4 +81,5 @@
 		   </if>
 		 where account = #{account}
 	</update>
+	
 </mapper>

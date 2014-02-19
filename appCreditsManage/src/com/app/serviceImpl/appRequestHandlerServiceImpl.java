@@ -1,6 +1,5 @@
 package com.app.serviceImpl;
 
-import java.io.IOException;
 import java.io.UnsupportedEncodingException;
 import java.text.SimpleDateFormat;
 import java.util.Date;
@@ -132,12 +131,16 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 								case tjt009:
 									result = creditsService.userDaliyTaskProcess(rqXmlstr, head);
 									break;
+								case tjt017:
+									result = creditsService.userPromoteProcess(rqXmlstr, head);
+									break;
 								default:
 									flag = true;
 									break;
 							}
 						} catch (Exception e){
-							logger.debug("[SystemError] = " + e.getMessage());
+							e.printStackTrace();
+							logger.error("[SystemError]", e);
 							flag = true;
 						}
 						
@@ -160,12 +163,10 @@ public class appRequestHandlerServiceImpl implements appRequestHandlerService {
 			}
 			
 			
-		} catch (UnsupportedEncodingException e) {
+		} catch (Exception e) {
 			// TODO Auto-generated catch block
-			logger.debug("[SystemError] = " + e.getMessage());
-		} catch (IOException e) {
-			// TODO Auto-generated catch block
-			logger.debug("[SystemError] = " + e.getMessage());
+			e.printStackTrace();
+			logger.error("[SystemError]", e);
 		}// 
 		
 		if(logger.isDebugEnabled()) {

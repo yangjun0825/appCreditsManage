@@ -14,6 +14,7 @@ import org.apache.commons.logging.LogFactory;
 import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
+import org.springframework.util.ObjectUtils;
 
 import com.app.credits.bean.CreditsBean;
 import com.app.credits.bean.WithDrawBean;
@@ -155,7 +156,7 @@ public class CreditsServiceImpl implements CreditsService {
 					}
 				}
 				
-				if(CollectionUtils.isNotEmpty(userInfoList)) {
+				if(CollectionUtils.isNotEmpty(userInfoList) && userInfoList.get(0) != null) {
 					//获取上线信息，如果上线信息不为空，则上线也要增加积分
 					String linkId = (String)userInfoList.get(0).get("linkid");
 					
@@ -178,18 +179,20 @@ public class CreditsServiceImpl implements CreditsService {
 						}
 						
 						if(CollectionUtils.isNotEmpty(creditsRecordsList)) {
-							//如果第一次增加积分，则该用户上线增加50,第二次增加20，第三次增加50
-							if(creditsRecordsList.size() <=3) {
+							//如果第一次增加积分，则该用户上线增加30,第二次增加50，第三次增加50
+							if(creditsRecordsList.size() <= 2) {
 								String insertStr2 = "credits.insertUserCredits";
 								
 								CreditsBean creditsBean2 = new CreditsBean();
 								creditsBean2.setId(UUID.randomUUID().toString());
 								creditsBean2.setAccount(linkId);
 								
-								if(creditsRecordsList.size() == 1 || creditsRecordsList.size() == 3) {
-									creditsBean2.setCredit("50");
-								} else {
-									creditsBean2.setCredit("20");
+								if(creditsRecordsList.size() == 1) {
+									creditsBean2.setCredit(Constant.award_first_load);
+								} 
+								
+								if(creditsRecordsList.size() == 2) {
+									creditsBean2.setCredit(Constant.award_second_load);
 								}
 								
 								creditsBean2.setCreditType(type);
@@ -206,10 +209,12 @@ public class CreditsServiceImpl implements CreditsService {
 								String updateStr2 = "credits.updateUserTotalCreditForAdd";
 								Map<String, Object> params2 = new HashMap<String, Object>();
 								
-								if(creditsRecordsList.size() == 1 || creditsRecordsList.size() == 3) {
-									params2.put("credit", "50");
-								} else {
-									params2.put("credit", "20");
+								if(creditsRecordsList.size() == 1) {
+									params2.put("credit", Constant.award_first_load);
+								} 
+								
+								if(creditsRecordsList.size() == 2) {
+									params2.put("credit", Constant.award_second_load);
 								}
 								
 								params2.put("account", linkId);
@@ -241,7 +246,7 @@ public class CreditsServiceImpl implements CreditsService {
 			}
 			
 			//如果查询到的用户总积分比用户同步的积分大，才允许提取积分
-			if(CollectionUtils.isNotEmpty(userInfoList)) {
+			if(CollectionUtils.isNotEmpty(userInfoList) && userInfoList.get(0) != null) {
 				String totalCredit = (String)userInfoList.get(0).get("totalcredit");
 				
 				int totalCredit_i = Integer.parseInt(totalCredit);
@@ -493,7 +498,7 @@ public class CreditsServiceImpl implements CreditsService {
 			}
 		}
 		
-		if(CollectionUtils.isNotEmpty(userInfoList)) {
+		if(CollectionUtils.isNotEmpty(userInfoList) && userInfoList.get(0) != null) {
 			String totalCredit = (String)userInfoList.get(0).get("totalcredit");
 			
 			int totalCredit_i = Integer.parseInt(totalCredit);
@@ -661,19 +666,29 @@ public class CreditsServiceImpl implements CreditsService {
 			return response;
 		}
 		
-		//查询该用户今天是否已经做过任务
+		//查询该用户今天是否已经分享过
 		String queryWdStr = "credits.retrieveCreditsRecords";
 		Map<String, Object> paramWds = new HashMap<String, Object>();
 		paramWds.put("account", account);
 		paramWds.put("creditType", Constant.add_credit);
+		
+		if(Constant.task_share.equals(taskType)) {
+			paramWds.put("channelType", Constant.channelType_share);
+		}
+		
+		if(Constant.task_lottery.equals(taskType)) {
+			paramWds.put("channelType", Constant.channelType_drawLottery);
+		}
+		
 		paramWds.put("queryByDate", Constant.add_credit);
+		
 		List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryWdStr, paramWds);
 		
 		if(logger.isDebugEnabled()) {
 			logger.debug("[creditsRecordsList] = " + creditsRecordsList);
 		}
 		
-		//如果查询不到记录，则表示此次为该用户第一次做任务，此时需要奖励积分，为5-15个积分
+		//如果查询不到记录，则表示此次为该用户第做任务，此时需要奖励积分，为5-15个积分，如果是分享，则奖励5个积分
 		if(CollectionUtils.isEmpty(creditsRecordsList)) {
 			HashSet<Integer> set = new HashSet<Integer>();  
 			Util.randomSet(5, 10, 1, set);
@@ -689,9 +704,25 @@ public class CreditsServiceImpl implements CreditsService {
 			CreditsBean creditsBean = new CreditsBean();
 			creditsBean.setId(UUID.randomUUID().toString());
 			creditsBean.setAccount(account);
-			creditsBean.setCredit(creditRandom + "");
+			
+			if(Constant.task_lottery.equals(taskType)) {
+				creditsBean.setCredit(creditRandom + "");
+			}
+			
+			if(Constant.task_share.equals(taskType)) {
+				creditsBean.setCredit("5");
+			}
+			
 			creditsBean.setCreditType(Constant.add_credit);
-			creditsBean.setChannelType("");
+			
+			if(Constant.task_lottery.equals(taskType)) {
+				creditsBean.setChannelType(Constant.channelType_drawLottery);
+			}
+			
+			if(Constant.task_share.equals(taskType)) {
+				creditsBean.setChannelType(Constant.channelType_share);
+			}
+			
 			creditsBean.setCreateTime(new Date());
 			
 			int i = creditsDao.insert(insertStr, creditsBean);
@@ -718,7 +749,13 @@ public class CreditsServiceImpl implements CreditsService {
 			userParams.put("account", account);
 			List<Map<String, Object>> userInfoList = creditsDao.getSearchList(queryStr, userParams);
 			
-			String str = "<cjcredit>" + creditRandom + "</cjcredit><credit>"+ userInfoList.get(0).get("totalcredit") +"</credit>";
+			String awardCredit = "5";
+			
+			if(Constant.task_lottery.equals(taskType)) {
+				creditsBean.setCredit(creditRandom + "");
+			}
+			
+			String str = "<cjcredit>" + awardCredit + "</cjcredit><credit>"+ userInfoList.get(0).get("totalcredit") +"</credit>";
 			
 			response = Util.getResponseForTrue(head, str);
 			
@@ -736,4 +773,112 @@ public class CreditsServiceImpl implements CreditsService {
 		return response;
 	}
 
+	/* (非 Javadoc) 
+	* <p>Title: userPromoteProcess</p> 
+	* <p>Description: 软件推广处理</p> 
+	* @param xmlStr
+	* @param head
+	* @return
+	* @throws Exception 
+	* @see com.app.credits.service.CreditsService#userPromoteProcess(java.lang.String, com.app.vo.Head) 
+	*/
+	@Override
+	public String userPromoteProcess(String xmlStr, Head head) throws Exception {
+		logger.debug("enter CreditsServiceImpl.userPromoteProcess(String xmlStr, Head head) throws Exception");
+		
+		String response = "";
+		
+		List<Element> list = Util.getRequestDataByXmlStr(xmlStr, "svccont/pra/item");
+		
+		String account = "";
+		
+		if(!CollectionUtils.isEmpty(list)) {
+			account = list.get(0).elementTextTrim("accout");
+		}
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[account] = " + account);
+		}
+		
+		if(StringUtils.isBlank(account)) {
+			response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
+			return response;
+		}
+		
+		
+		StringBuffer userSb = new StringBuffer();
+		
+		userSb.append("<awardt>150</awardt>");
+		userSb.append("<awardone>20</awardone>");
+		userSb.append("<awardtwo>30</awardtwo>");
+		userSb.append("<awardthree>50</awardthree>");
+		userSb.append("<awardfour>50</awardfour>");
+		
+		//获取用户所有下线总数
+		String queryStr = "user.retrieveUserInfo";
+		
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("linkId", account);
+		List<Map<String, Object>> userInfoList = creditsDao.getSearchList(queryStr, params);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[userInfoList] = " + userInfoList);
+			if(userInfoList != null) {
+				logger.debug("[userInfoListSize] = " + userInfoList.size());
+			}
+		}
+		
+		if(CollectionUtils.isNotEmpty(userInfoList)) {
+			if(userInfoList.size()%2 == 1) {
+				userSb.append("<offlinet>"+ (userInfoList.size()/2 + 1) +"</offlinet>");
+			} else {
+				userSb.append("<offlinet>"+ userInfoList.size()/2 +"</offlinet>");
+			}
+			
+		} else {
+			userSb.append("<offlinet>0</offlinet>");
+		}
+		
+		
+		//获取用户增加的总积分数
+		Map<String, Object> paramWds = new HashMap<String, Object>();
+		paramWds.put("account", account);
+		paramWds.put("creditType", Constant.add_credit);
+		paramWds.put("channelType", Constant.channelType_invite);
+
+		String queryAddStr = "credits.retrieveUserRelatedCreditCount";
+		List<Map<String, Object>> creditsRecordsList = creditsDao.getSearchList(queryAddStr, paramWds);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[creditsRecordsList] = " + creditsRecordsList);
+		}
+		
+		if(CollectionUtils.isNotEmpty(creditsRecordsList) && creditsRecordsList.get(0) != null) {
+			userSb.append("<rewarded>"+ creditsRecordsList.get(0).get("credit") +"</rewarded>");
+		} else {
+			userSb.append("<rewarded>0</rewarded>");
+		}
+		
+		
+		String linkApkPrefix = Integer.toHexString(Integer.parseInt(account));
+		
+		String linkUrl = "http://115.29.46.58:8082/creditsManage/version/" + linkApkPrefix + ".apk";
+		
+		userSb.append("<loadpath>" + linkUrl + "</loadpath>");
+		
+		String encodeStr = userSb.toString();
+		if(logger.isDebugEnabled()) {
+			logger.debug("[linkApkPrefix] = " + linkApkPrefix + " [encodeStr] = " + encodeStr);
+		}
+		
+		response = Util.getResponseForTrue(head, encodeStr);
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[response] = " + response);
+		}
+		
+		logger.debug("exit CreditsServiceImpl.userPromoteProcess(String xmlStr, Head head) throws Exception");
+		
+		return response;
+	}
 }

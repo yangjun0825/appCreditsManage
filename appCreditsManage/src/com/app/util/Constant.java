@@ -48,9 +48,9 @@ public class Constant {
 	public static final String channelType_load = "1";
 	
 	/** 
-	* @Fields channelType_taskDaily : 每日任务渠道
+	* @Fields channelType_taskDaily : 抽奖渠道
 	*/ 
-	public static final String channelType_taskDaily = "2";
+	public static final String channelType_drawLottery = "2";
 	
 	/** 
 	* @Fields channelType_invite : 邀请用户渠道
@@ -66,4 +66,29 @@ public class Constant {
 	* @Fields channelType_lottery : 彩票奖励渠道
 	*/ 
 	public static final String channelType_lottery  = "5";
+	
+	/** 
+	* @Fields channelType_share : 分享渠道
+	*/ 
+	public static final String channelType_share  = "6";
+	
+	/** 
+	* @Fields award_first_install : 下线首次安装软件奖励的积分
+	*/ 
+	public static final String award_first_install = "20";
+	
+	/** 
+	* @Fields award_first_load : 下线第一次做任务
+	*/ 
+	public static final String award_first_load = "20";
+	
+	/** 
+	* @Fields award_second_load : 下线第二次做任务
+	*/ 
+	public static final String award_second_load = "30";
+	
+	/** 
+	* @Fields award_third_load : 下线第三次做任务
+	*/ 
+	public static final String award_third_load = "50";
 }

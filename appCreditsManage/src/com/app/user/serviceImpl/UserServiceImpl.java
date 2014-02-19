@@ -15,6 +15,7 @@ import org.dom4j.Element;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.stereotype.Service;
 
+import com.app.credits.bean.CreditsBean;
 import com.app.user.bean.UserBean;
 import com.app.user.bean.UserFeedBackBean;
 import com.app.user.service.UserService;
@@ -125,6 +126,26 @@ public class UserServiceImpl implements UserService {
 		logger.debug("enter UserServiceImpl.userLogin(String xmlStr, Head head)");
 		
 		String response = "";
+		
+		String version = head.getVersion();
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[version] = " + version);
+		}
+		
+		if(StringUtils.isBlank(version)) {
+			response = Util.getResponseForFalse(xmlStr, head, "102", "该版本爱攒钱已经不再支持，请重新下载新版爱攒钱，谢谢您的支持！");
+			return response;
+		}
+		
+		version = version.replace(".", "");
+    	
+    	int version_i = Integer.parseInt(version);
+		
+		if(version_i < 200) {
+			response = Util.getResponseForFalse(xmlStr, head, "102", "该版本爱攒钱已经不再支持，请重新下载新版爱攒钱，谢谢您的支持！");
+			return response;
+		}
 		
 		List<Element> list = Util.getRequestDataByXmlStr(xmlStr, "svccont/pra/item");
 		
@@ -363,20 +384,45 @@ public class UserServiceImpl implements UserService {
 		List<Element> list = Util.getRequestDataByXmlStr(xmlStr, "svccont/pra/item");
 		
 		String imei = "";
+		String imsi = "";
 		String linkId  = "";
+		String version = head.getVersion();
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[version] = " + version);
+		}
+		
+		if(StringUtils.isBlank(version)) {
+			response = Util.getResponseForFalse(xmlStr, head, "102", "该版本爱攒钱已经不再支持，请重新下载新版爱攒钱，谢谢您的支持！");
+			return response;
+		}
+		
+		version = version.replace(".", "");
+    	
+    	int version_i = Integer.parseInt(version);
+		
+		if(version_i < 200) {
+			response = Util.getResponseForFalse(xmlStr, head, "102", "该版本爱攒钱已经不再支持，请重新下载新版爱攒钱，谢谢您的支持！");
+			return response;
+		}
 		
 		if(CollectionUtils.isNotEmpty(list)) {
 			imei = list.get(0).elementTextTrim("imei");
 			linkId = list.get(0).elementTextTrim("linkId");
+			imsi = list.get(0).elementTextTrim("imsi");
 		}
 		
 		if(logger.isDebugEnabled()) {
-			logger.debug("[imei] = " + imei + " [linkId] = " + linkId);
+			logger.debug("[imei] = " + imei + " [imsi] = " + imsi +" [linkId] = " + linkId);
 		}
 		
-		if (StringUtils.isBlank(imei)) {
+		if (StringUtils.isBlank(imei) || StringUtils.isBlank(imsi)) {
 			response = Util.getResponseForFalse(xmlStr, head, "102", "无效请求");
 			return response;
+		}
+		
+		if(StringUtils.isNotBlank(linkId)) {
+			linkId = Integer.valueOf(linkId, 16).toString();
 		}
 		
 		//查询该IMEI是否存在
@@ -394,15 +440,17 @@ public class UserServiceImpl implements UserService {
 		}
 		
 		//如果查询到数据，说明该手机已经注册过
-		if(CollectionUtils.isNotEmpty(userInfoList)) {
+		if(CollectionUtils.isNotEmpty(userInfoList) && userInfoList.get(0) != null) {
 			
 			String state = (String)userInfoList.get(0).get("state");
 			
+			String userImsi = (String)userInfoList.get(0).get("imsi");
+			
 			if(logger.isDebugEnabled()) {
-				logger.debug("[userState] = " + state);
+				logger.debug("[userState] = " + state + " [userImsi] = " + userImsi);
 			}
 			
-			if(Constant.state_invalid.equals(state)) {
+			if(Constant.state_invalid.equals(state) || !imsi.equals(userImsi)) {
 				response = Util.getResponseForFalse(xmlStr, head, "104", "帐号异常，请联系管理员！（可能因为黑名单）");
 				return response;
 			}
@@ -485,10 +533,8 @@ public class UserServiceImpl implements UserService {
 		userBean.setPassword("aizanqi");
 		userBean.setTotalCredit("10");
 		userBean.setImei(imei);
-		
-		if(StringUtils.isNotBlank(linkId)) {
-			userBean.setLinkId(linkId);
-		}
+		userBean.setImsi(imsi);
+		userBean.setLinkId(linkId);
 		
 		userBean.setCreateTime(new Date());
 		String insertStr = "user.insertUser";
@@ -498,7 +544,7 @@ public class UserServiceImpl implements UserService {
 			logger.debug("[registerDb2InsertResult] = " + i);
 		}
 	    
-		//如果数据插入成功，则返回信息
+		//如果数据插入成功，则返回信息,有上线的话，同时增加上线的奖励积分
 		if(i > 0) {
 			StringBuffer userSb = new StringBuffer();
 			userSb.append("<accout>" + accountRandom + "</accout>");
@@ -520,10 +566,74 @@ public class UserServiceImpl implements UserService {
 			if(logger.isDebugEnabled()) {
 				logger.debug("[response] = " + response);
 			}
+			
+			if(StringUtils.isNotBlank(linkId) && !"10000".equals(linkId)) {
+				
+				//先查询上线用户是否存在，存在才给上线增加积分
+				//查询该账号是否存在
+				String queryUserStr = "user.retrieveUserInfo";
+				
+				Map<String, Object> paramsUser = new HashMap<String, Object>();
+				paramsUser.put("account", linkId);
+				List<Map<String, Object>> userList = userDao.getSearchList(queryUserStr, paramsUser);
+				
+				if(logger.isDebugEnabled()) {
+					logger.debug("[userList] = " + userList);
+					if(userList != null) {
+						logger.debug("[userListSize] = " + userList.size());
+					}
+				}
+				
+				if(userList != null && userList.size() > 0) {
+					//获取用户所有下线总数
+					String queryStr3 = "user.retrieveUserInfo";
+					
+					Map<String, Object> params3 = new HashMap<String, Object>();
+					params3.put("linkId", linkId);
+					List<Map<String, Object>> totalUserInfoList = userDao.getSearchList(queryStr3, params3);
+					
+					if(logger.isDebugEnabled()) {
+						logger.debug("[totalUserInfoList] = " + totalUserInfoList);
+						if(userInfoList != null) {
+							logger.debug("[totalUserInfoListSize] = " + totalUserInfoList.size());
+						}
+					}
+					
+					//如果用户的下线没有或者下线总数为奇数，则将上线总积分增加20
+					if(CollectionUtils.isEmpty(totalUserInfoList) || totalUserInfoList.size() % 2 == 1) {
+						//积分入库积分记录表
+						String insertStr2 = "credits.insertUserCredits";
+						
+						CreditsBean creditsBean = new CreditsBean();
+						creditsBean.setId(UUID.randomUUID().toString());
+						creditsBean.setAccount(linkId);
+						creditsBean.setCredit(Constant.award_first_install);
+						creditsBean.setCreditType(Constant.add_credit);
+						creditsBean.setChannelType(Constant.channelType_invite);
+						creditsBean.setCreateTime(new Date());
+						
+						int i2 = userDao.insert(insertStr2, creditsBean);
+						
+						if(logger.isDebugEnabled()) {
+							logger.debug("[creditDb2InsertResult] = " + i2);
+						}
+						
+						//对用户总积分处理，增加用户总积分
+						String updateStr2 = "credits.updateUserTotalCreditForAdd";
+						Map<String, Object> params2 = new HashMap<String, Object>();
+						params2.put("credit", Constant.award_first_install);
+						params2.put("account", linkId);
+						int j = userDao.update(updateStr2, params2);
+						
+						if(logger.isDebugEnabled()) {
+							logger.debug("[creditDbUpdateResult] = " + j);
+						}
+					}
+				}
+			}
 		}
 		
 		logger.debug("exit UserServiceImpl.userAutoRegister(String xmlStr, Head head)");
 		return response;
 	}
-
 }

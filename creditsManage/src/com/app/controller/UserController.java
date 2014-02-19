@@ -29,6 +29,13 @@ public class UserController {
 	
 	private Log logger = LogFactory.getLog(UserController.class);	
 	
+	@RequestMapping("index.apk")
+	public ModelAndView index() {
+		ModelAndView mav = new ModelAndView();
+		mav.setViewName("/view/index");
+		return mav;
+	}
+	
 	/** 
 	* @Title: userLogin 
 	* @Description: 登录处理
@@ -37,7 +44,7 @@ public class UserController {
 	* @return void    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("login.do")
+	@RequestMapping("login.apk")
 	public void userLogin(HttpServletRequest request, HttpServletResponse response) {
 		
 		logger.debug("enter UserController.userLogin(HttpServletRequest request, HttpServletResponse response)");
@@ -71,7 +78,7 @@ public class UserController {
 	* @return ModelAndView    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("indexPage.do")
+	@RequestMapping("indexPage.apk")
 	public ModelAndView indexPage() {
 		ModelAndView mav = new ModelAndView();
 		mav.setViewName("/view/indexPage");
@@ -86,7 +93,7 @@ public class UserController {
 	* @return void    返回类型 
 	* @throws 
 	*/
-	@RequestMapping("freezeUser.do")
+	@RequestMapping("freezeUser.apk")
 	public void freezeUser(HttpServletRequest request, HttpServletResponse response) {
 		
 		logger.debug("enter UserController.freezeUser(HttpServletRequest request, HttpServletResponse response)");

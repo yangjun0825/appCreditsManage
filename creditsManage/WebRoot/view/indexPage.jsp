@@ -33,15 +33,15 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	
 		$(document).ready(function(){
 			$('#mac').click(function() { 
-				window.location.href = bastPath + "credit/macCredit.do";	
+				window.location.href = bastPath + "credit/macCredit.apk";	
 			});
 			
 			$('#accman').bind('vclick',function() { 
-				window.location.href = bastPath + "credit/accCreditCount.do";	
+				window.location.href = bastPath + "credit/accCreditCount.apk";	
 			});
 			
 			$('#accinfo').bind('vclick',function() { 
-				window.location.href = bastPath + "credit/showCreditWdList.do";	
+				window.location.href = bastPath + "credit/showCreditWdList.apk";	
 			});
 			
 			$('#freezeUser').bind('vclick',function() { 
@@ -59,7 +59,7 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 			if (r==true){
 			  	$.ajax({ 
 			            type : "POST", 
-			            url  : "<%=basePath%>user/freezeUser.do",  
+			            url  : "<%=basePath%>user/freezeUser.apk",  
 			            cache : false, 
 			            data : {
 			            	'account':account
