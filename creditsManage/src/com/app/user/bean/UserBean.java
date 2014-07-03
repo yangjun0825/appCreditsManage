@@ -36,6 +36,21 @@ public class UserBean {
 	private String zfbAccount;
 	
 	/** 
+	* @Fields linkId : 用户上线ID 
+	*/ 
+	private String linkId;
+	
+	/** 
+	* @Fields imei : 手机IMEI
+	*/ 
+	private String imei;
+	
+	/** 
+	* @Fields imsi : 手机IMSI
+	*/ 
+	private String imsi;
+	
+	/** 
 	* @Fields state : 用户状态
 	*/ 
 	private String state;
@@ -99,6 +114,30 @@ public class UserBean {
 
 	public void setState(String state) {
 		this.state = state;
+	}
+
+	public String getLinkId() {
+		return linkId;
+	}
+
+	public void setLinkId(String linkId) {
+		this.linkId = linkId;
+	}
+
+	public String getImei() {
+		return imei;
+	}
+
+	public void setImei(String imei) {
+		this.imei = imei;
+	}
+
+	public String getImsi() {
+		return imsi;
+	}
+
+	public void setImsi(String imsi) {
+		this.imsi = imsi;
 	}
 	
 	

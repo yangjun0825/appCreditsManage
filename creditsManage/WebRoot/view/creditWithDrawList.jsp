@@ -30,7 +30,9 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	<script type="text/javascript" src="<%=basePath%>ui/jquery.mobile-1.4.0.min.js"></script>
 	
 	<script type="text/javascript">
-
+		
+		var basePath = '<%=basePath%>';
+	
 		function withDraw(account, pendCredit) {
 		
 			if("null" == pendCredit || "" == pendCredit || "0" == pendCredit) {
@@ -62,6 +64,16 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 		function onError(data,status){ 
     		//进行错误处理 
 		} 
+		
+		//查看增加积分记录
+		function showAddCreditsRecord(id) {
+			window.location.href = basePath + "credit/showCreditAddList.apk?account=" + id;
+		}
+		
+		//查看关联账户
+		function showRelatedUser(id) {
+			window.location.href = basePath + "user/showUserRelatedList.apk?linkId=" + id;
+		}
 	</script>
 	
   </head>
@@ -79,6 +91,10 @@ String basePath = request.getScheme()+"://"+request.getServerName()+":"+request.
 	    				<c:forEach items="${userList}" var="user">
 		   					<li>
 		   						<a href="<%=basePath%>credit/showCreditWdDetailList.apk?account=${user.account}" >用户:${user.account}, 总积分:${user.totalCredit} ,待提现积分：${user.pendCredit}</a>
+		   						<input type="button" value="查看增分记录" onclick="showAddCreditsRecord('${user.account}')"/>
+		   						<input type="button" value="查看下线记录" onclick="showRelatedUser('${user.account}')"/>
+		   						<br>
+		   						<br>
 		   					</li>
 	   					</c:forEach>
 	   				</ul>

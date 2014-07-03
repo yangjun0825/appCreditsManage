@@ -4,6 +4,10 @@ import java.io.BufferedInputStream;
 import java.io.BufferedOutputStream;
 import java.io.File;
 import java.io.FileInputStream;
+import java.io.IOException;
+import java.io.OutputStream;
+import java.io.UnsupportedEncodingException;
+
 import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpServletResponse;
 
@@ -31,11 +35,14 @@ public class FileOperateUtil {
     */
     public static void download(HttpServletRequest request,  
             HttpServletResponse response, String storeName, String contentType,  
-            String realName) throws Exception {  
+            String realName) {  
         response.setContentType("text/html;charset=UTF-8");  
-        request.setCharacterEncoding("UTF-8");  
-        BufferedInputStream bis = null;  
-        BufferedOutputStream bos = null;  
+        try {
+			request.setCharacterEncoding("UTF-8");
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
   
         String ctxPath = request.getSession().getServletContext()  
                 .getRealPath("/")  
@@ -45,19 +52,59 @@ public class FileOperateUtil {
         long fileLength = new File(downLoadPath).length();  
   
         response.setContentType(contentType);  
-        response.setHeader("Content-disposition", "attachment; filename="  
-                + new String(realName.getBytes("utf-8"), "ISO-8859-1"));  
+        try {
+			response.setHeader("Content-disposition", "attachment; filename="  
+			        + new String(realName.getBytes("utf-8"), "ISO-8859-1"));
+		} catch (UnsupportedEncodingException e) {
+			// TODO Auto-generated catch block
+			e.printStackTrace();
+		}  
         response.addHeader("Content-Length", String.valueOf(fileLength));  
        //response.setHeader("Content-Length", String.valueOf(fileLength));  
         
-        bis = new BufferedInputStream(new FileInputStream(downLoadPath));  
-        bos = new BufferedOutputStream(response.getOutputStream());  
-        byte[] buff = new byte[2048];  
-        int bytesRead;  
-        while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {  
-            bos.write(buff, 0, bytesRead);  
-        }  
-        bis.close();  
-        bos.close();  
+        BufferedInputStream bis = null;  
+        BufferedOutputStream bos = null;  
+        
+        FileInputStream fis = null;
+        OutputStream os = null;
+        
+        try {
+        	 fis = new FileInputStream(downLoadPath);
+        	 bis = new BufferedInputStream(fis);  
+        	 
+        	 os = response.getOutputStream();
+             bos = new BufferedOutputStream(os);  
+             byte[] buff = new byte[2048];  
+             int bytesRead;  
+             while (-1 != (bytesRead = bis.read(buff, 0, buff.length))) {  
+                 bos.write(buff, 0, bytesRead);  
+             }  
+             bos.close(); 
+             os.close();
+             fis.close();
+             bis.close(); 
+        } catch(Exception e) {
+        	e.printStackTrace();
+        } finally {
+        	try {
+        		if(bos != null) {
+        			bos.close();
+        		}
+				if(bis != null) {
+					bis.close();
+				}
+				if(os != null) {
+					os.close();
+				}
+				if(fis != null) {
+					fis.close();
+				}
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}
+        	
+        }
+       
     }  
 }  

@@ -118,4 +118,37 @@ public class UserController {
 		logger.debug("exit UserController.freezeUser(HttpServletRequest request, HttpServletResponse response)");
 	}
 	
+	/** 
+	* @Title: showUserRelatedList 
+	* @Description: 展示用户下线列表
+	* @param request
+	* @return ModelAndView    返回类型 
+	* @throws 
+	*/
+	@RequestMapping("showUserRelatedList.apk")
+	public ModelAndView showUserRelatedList(HttpServletRequest request) {
+		
+		logger.debug("enter UserController.showUserRelatedList(HttpServletRequest request)");
+		
+		String linkId = request.getParameter("linkId");
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[linkId] = " + linkId);
+		}
+		
+		ModelAndView mav = new ModelAndView();
+		
+		//获取用户下线记录
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("linkId", linkId);
+		List<UserBean> userList = userService.retrieveUserInfoList(params);
+		
+		mav.addObject("userList", userList);
+		
+		mav.setViewName("/view/userRelatedDetailList");
+		
+		logger.debug("exit UserController.showUserRelatedList(HttpServletRequest request)");
+		return mav;
+	}
+	
 }

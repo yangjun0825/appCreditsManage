@@ -62,6 +62,38 @@ public class CreditController {
 		return mav;
 	}
 	
+	/** 
+	* @Title: showCreditAddInfoList 
+	* @Description: 获取用户增加积分记录
+	* @return ModelAndView    返回类型 
+	* @throws 
+	*/
+	@RequestMapping("showCreditAddList.apk")
+	public ModelAndView showCreditAddInfoList(HttpServletRequest request) {
+		
+		logger.debug("enter CreditController.showCreditAddInfoList()");
+		
+		String account = request.getParameter("account");
+		
+		if(logger.isDebugEnabled()) {
+			logger.debug("[account] = " + account);
+		}
+		
+		ModelAndView mav = new ModelAndView();
+		
+		//获取用户待体现记录
+		Map<String, Object> params = new HashMap<String, Object>();
+		params.put("creditType", Constant.add_credit);
+		params.put("account", account);
+		List<CreditsBean> creditsList = creditService.retrieveCreditRecordListByCondition(params);
+		
+		mav.addObject("creditsList", creditsList);
+		
+		mav.setViewName("/view/creditAddDetailList");
+		
+		logger.debug("exit CreditController.showCreditWithDrawList()");
+		return mav;
+	}
 	
 	/** 
 	* @Title: retrieveCreditWithDrawDetailList 

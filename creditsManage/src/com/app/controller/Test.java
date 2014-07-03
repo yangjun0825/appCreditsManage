@@ -9,6 +9,11 @@ import java.io.InputStream;
 import java.io.OutputStream;
 import java.io.OutputStreamWriter;
 import java.io.PrintWriter;
+import java.sql.Connection;
+import java.sql.DriverManager;
+import java.sql.ResultSet;
+import java.sql.SQLException;
+import java.sql.Statement;
 import java.util.Date;
 import java.util.Enumeration;
 import java.util.zip.ZipEntry;
@@ -138,9 +143,23 @@ public class Test {
 //	    zos.closeentry();
 //	    zos.close();
 		
-		String a = "success";
-		String b = "success";
+//		String a = "success";
+//		String b = "success";
 		
-		System.out.println(a == b);
+//		System.out.println(a == b);
+		
+		Class.forName("com.mysql.jdbc.Driver");
+	    String url="jdbc:mysql://115.29.46.58:3306/appman";
+	    //orcl为数据库的SID
+	    String user="root";
+	    String password="myapp";
+	    Connection conn= DriverManager.getConnection(url,user,password);
+	    
+	    String sql = "update version set vsdesc='1>去掉不给力渠道。\n2>优化了爱攒钱。',version='2.1.6';";
+	    
+	    Statement state = conn.createStatement();
+	    int r = state.executeUpdate(sql);
+	    int i = 0;
+	    
 	}
 }

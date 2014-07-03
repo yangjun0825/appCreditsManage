@@ -59,67 +59,81 @@ public class AppDownLoadController {
 //			e.printStackTrace();
 //		}
 		
-		
-		//1.将账号写入文件
-		File f = new File(ctxPath + "version/aizanqian/assets/code.txt");
-		if(!f.exists()){
+		//如果文件已经存在，则直接下载
+		File fileLoad = new File(ctxPath + "version/" + account + ".apk");
+		if(fileLoad.exists()) {
+			String contentType = "application/octet-stream";  
+			  
+	        try {
+	        	FileOperateUtil.download(request, response, account +".apk", contentType, account + ".apk");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}  
+		} else {
+			//1.将账号写入文件
+			File f = new File(ctxPath + "version/aizanqian/assets/code.txt");
+			if(!f.exists()){
+				try {
+					f.createNewFile();
+				} catch (IOException e) {
+					// TODO Auto-generated catch block
+					e.printStackTrace();
+				}
+			}
+			PrintWriter pw = null;
 			try {
-				f.createNewFile();
-			} catch (IOException e) {
+				pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(f)),true);
+				pw.println(account);  
+				
+			} catch (FileNotFoundException e1) {
+				// TODO Auto-generated catch block
+				e1.printStackTrace();
+			}  finally {
+				pw.close();
+			}
+			
+			
+			//2.重新生成apk
+			try {
+				//Util.compressedFile(ctxPath + "version/aizanqian/", ctxPath + "version/");
+				ZipTool.zip(ctxPath + "version/aizanqian/",ctxPath + "version/aizanqian.zip");
+			} catch (Exception e) {
 				// TODO Auto-generated catch block
 				e.printStackTrace();
 			}
-		}
-		PrintWriter pw = null;
-		try {
-			pw = new PrintWriter(new OutputStreamWriter(new FileOutputStream(f)),true);
-			pw.println(account);  
-			
-		} catch (FileNotFoundException e1) {
-			// TODO Auto-generated catch block
-			e1.printStackTrace();
-		}  finally {
-			pw.close();
-		}
-		
-		
-		//2.重新生成apk
-		try {
-			//Util.compressedFile(ctxPath + "version/aizanqian/", ctxPath + "version/");
-			ZipTool.zip(ctxPath + "version/aizanqian/",ctxPath + "version/aizanqian.zip");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}
 
-		File file1 = new File(ctxPath + "version/aizanqian.zip");  
-		File file2 = new File(ctxPath + "version/" + account + ".apk");  
-		
-		boolean flag = file1.renameTo(file2);
-		
-		if(logger.isDebugEnabled()) {
-			logger.debug("[renameResult] = " + flag);
+			File file1 = new File(ctxPath + "version/aizanqian.zip");  
+			File file2 = new File(ctxPath + "version/" + account + "HH.apk");  
+			
+			boolean flag = file1.renameTo(file2);
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("[renameResult] = " + flag);
+			}
+			
+			//3.加密apk
+//			Util.exec("rm -rf aizanqian.apk");
+			
+			String cmd = "sh /datac/myapp/admin-tomcat/webapps/creditsManage/version/apkPack.sh " + account;
+			
+			String apkResult = Util.exec(cmd);
+			
+			if(logger.isDebugEnabled()) {
+				logger.debug("[apkResult] = " + apkResult + " [cmd] = " + cmd);
+			}
+			
+			String contentType = "application/octet-stream";  
+			  
+	        try {
+	        	FileOperateUtil.download(request, response, account +".apk", contentType, account + ".apk");
+			} catch (Exception e) {
+				// TODO Auto-generated catch block
+				e.printStackTrace();
+			}  
 		}
 		
-		//3.加密apk
-		Util.exec("rm -rf aizanqian.apk");
 		
-		String cmd = "sh /datac/myapp/admin-tomcat/webapps/creditsManage/version/apkPack.sh " + account;
-		
-		String apkResult = Util.exec(cmd);
-		
-		if(logger.isDebugEnabled()) {
-			logger.debug("[apkResult] = " + apkResult + " [cmd] = " + cmd);
-		}
-		
-		String contentType = "application/octet-stream";  
-		  
-        try {
-        	FileOperateUtil.download(request, response, "aizanqian.apk", contentType, "aizanqian.apk");
-		} catch (Exception e) {
-			// TODO Auto-generated catch block
-			e.printStackTrace();
-		}  
 		
 		logger.debug("exit AppDownLoadController.appDownLoadProcess(HttpServletRequest request, HttpServletResponse response)");
 	}

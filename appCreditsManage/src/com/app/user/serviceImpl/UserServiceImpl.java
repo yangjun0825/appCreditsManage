@@ -450,7 +450,7 @@ public class UserServiceImpl implements UserService {
 				logger.debug("[userState] = " + state + " [userImsi] = " + userImsi);
 			}
 			
-			if(Constant.state_invalid.equals(state) || !imsi.equals(userImsi)) {
+			if(Constant.state_invalid.equals(state)) {
 				response = Util.getResponseForFalse(xmlStr, head, "104", "帐号异常，请联系管理员！（可能因为黑名单）");
 				return response;
 			}

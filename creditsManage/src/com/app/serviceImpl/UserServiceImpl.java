@@ -53,6 +53,9 @@ public class UserServiceImpl implements UserService {
 				userBean.setAccount((String)map.get("account"));
 				userBean.setPassword((String)map.get("password"));
 				userBean.setPendCredit((String)map.get("pendcredit"));
+				userBean.setImei((String)map.get("imei"));
+				userBean.setImsi((String)map.get("imsi"));
+				userBean.setLinkId((String)map.get("linkid"));
 				userBean.setState((String)map.get("state"));
 				userBean.setCreateTime((Date)map.get("createtime"));
 				userList.add(userBean);

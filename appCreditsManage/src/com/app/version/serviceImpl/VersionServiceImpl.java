@@ -106,6 +106,8 @@ public class VersionServiceImpl implements VersionService {
 	        			logger.debug("[encodeStr] = " + encodeStr);
 	        		}
 	        		response = Util.getResponseForTrue(head, encodeStr); 
+	        	} else {
+	        		response = Util.getResponseForTrue(head, "");
 	        	}
 	        }
 		}

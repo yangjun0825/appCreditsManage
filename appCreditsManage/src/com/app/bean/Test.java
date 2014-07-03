@@ -9,7 +9,10 @@ import javax.xml.namespace.QName;
 import javax.xml.rpc.Call;
 import javax.xml.rpc.ServiceException;
 
+import org.apache.cxf.endpoint.Endpoint;
 import org.apache.cxf.jaxws.endpoint.dynamic.JaxWsDynamicClientFactory;
+import org.apache.cxf.service.model.BindingInfo;
+import org.apache.cxf.service.model.BindingOperationInfo;
 
 import com.app.util.Util;
 
@@ -96,7 +99,29 @@ public class Test {
 //	    File file2=new File("D:/apk/b.txt");  
 //	    boolean flag = file1.renameTo(file2);
 	    System.out.println("flag: " + 0/2);
-	    
-	    
+	    String msg = "your password" + 1111 + ".";
+		String xmlstr = "<smsrequest><mobile>15234057707</mobile><msgcontent>" + msg + "</msgcontent></smsrequest>";
+	
+	    JaxWsDynamicClientFactory dcf = JaxWsDynamicClientFactory.newInstance();
+        org.apache.cxf.endpoint.Client client = dcf.createClient("http://183.203.18.7:8082/HuaWeiSms_WebService/services/HandleSms?wsdl");
+       
+	     // 下面一段处理 WebService接口和实现类namespace不同的情况  
+	     // CXF动态客户端在处理此问题时，会报No operation was found with the name的异常  
+	     Endpoint endpoint = client.getEndpoint();  
+	     QName opName = new QName(endpoint.getService().getName().getNamespaceURI(), "AddSmsInterface");  
+	     BindingInfo bindingInfo = endpoint.getEndpointInfo().getBinding();  
+	     if (bindingInfo.getOperation(opName) == null) {  
+	         for (BindingOperationInfo operationInfo : bindingInfo.getOperations()) {  
+	             if ("AddSmsInterface".equals(operationInfo.getName().getLocalPart())) {  
+	                 opName = operationInfo.getName();  
+	                 break;  
+	             }  
+	         }  
+	     }  
+        
+        
+        //sayHello 为接口中定义的方法名称   张三为传递的参数   返回一个Object数组
+        Object[] objects=client.invoke("AddSmsInterface", xmlstr); 
+		System.out.println(objects.toString());
     }  
 }

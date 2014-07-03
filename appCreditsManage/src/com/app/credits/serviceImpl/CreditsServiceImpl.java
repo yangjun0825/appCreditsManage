@@ -705,13 +705,15 @@ public class CreditsServiceImpl implements CreditsService {
 			creditsBean.setId(UUID.randomUUID().toString());
 			creditsBean.setAccount(account);
 			
-			if(Constant.task_lottery.equals(taskType)) {
-				creditsBean.setCredit(creditRandom + "");
-			}
+//			if(Constant.task_lottery.equals(taskType)) {
+//				creditsBean.setCredit(creditRandom + "");
+//			}
+//			
+//			if(Constant.task_share.equals(taskType)) {
+//				creditsBean.setCredit("5");
+//			}
 			
-			if(Constant.task_share.equals(taskType)) {
-				creditsBean.setCredit("5");
-			}
+			creditsBean.setCredit("1");
 			
 			creditsBean.setCreditType(Constant.add_credit);
 			
